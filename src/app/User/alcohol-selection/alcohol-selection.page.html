@@ -1,0 +1,9 @@
+<ion-content>
+<app-card
+[showHeader]="false"
+[subHeader]="'Wybierz podkategorię:'"
+[options]="['ALKOHOL BAR', 'BUTELKI MAGAZYN', 'PIWO']"
+(optionSelected)="onOptionSelected($event)"
+[hasBackButton]="true">
+</app-card>
+</ion-content>

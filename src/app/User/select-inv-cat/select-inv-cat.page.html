@@ -1,0 +1,10 @@
+<ion-content>
+  <app-card
+    [showHeader]="false"
+    [userName]="userName" 
+    [subHeader]="'Wybierz kategorię inwentaryzacyjną'"
+    [options]="['BAR', 'KUCHNIA', 'CHEMIA']"
+    (optionSelected)="onOptionSelected($event)"
+    [hasBackButton]="true">
+  </app-card>
+</ion-content>

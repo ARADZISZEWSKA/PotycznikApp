@@ -1,0 +1,24 @@
+<ion-content>
+  <div class="card">
+    <!-- Przycisk "Wróć", wyświetlany jeśli 'hasBackButton' jest true -->
+    <div *ngIf="hasBackButton" class="back-button-row">
+      <div class="back-button" (click)="goBack()"> &lt; </div>
+      <div class="back-text">Wróć</div>
+    </div>
+
+    <!-- Nagłówek, wyświetlany tylko jeśli 'showHeader' jest true -->
+    <div *ngIf="showHeader" class="header">
+      Hej, {{ userName }} 
+    </div>
+
+    <div *ngIf="subHeader" class="sub-header">
+      {{ subHeader }} 
+    </div>
+
+    <div class="options-wrapper">
+      <div *ngFor="let option of options" class="option-card" (click)="onOptionClick(option)">
+        {{ option }} 
+      </div>
+    </div>
+  </div>
+</ion-content>

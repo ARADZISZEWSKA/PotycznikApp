@@ -1,0 +1,10 @@
+<ion-content>
+  <app-card
+    [showHeader]="true" 
+    [userName]="userName"
+    [subHeader]="'Co chcesz dzisiaj zrobić?'"
+    [options]="['Przejrzyj stan', 'Przeprowadź inwentaryzację']"
+    (optionSelected)="onOptionSelected($event)"
+    [hasBackButton]="false">
+  </app-card>
+</ion-content>

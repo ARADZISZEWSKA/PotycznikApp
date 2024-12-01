@@ -1,0 +1,10 @@
+
+<ion-content>
+  <app-card
+    [showHeader]="false"
+    [subHeader]="'Wybierz kategorię przeglądania'"
+    [options]="['BAR', 'KUCHNIA', 'CHEMIA']"
+    (optionSelected)="onOptionSelected($event)"
+    [hasBackButton]="true">
+  </app-card>
+</ion-content>
