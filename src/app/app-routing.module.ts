@@ -15,6 +15,14 @@ const routes: Routes = [
     path: 'home-user',
     loadChildren: () => import('./home-user/home-user.module').then( m => m.HomeUserPageModule)
   },
+  {
+    path: 'home-admin',
+    loadChildren: () => import('./home-admin/home-admin.module').then( m => m.HomeAdminPageModule)
+  },
+  {
+    path: 'select-inv-cat',
+    loadChildren: () => import('./select-inv-cat/select-inv-cat.module').then( m => m.SelectInvCatPageModule)
+  },
 ];
 
 @NgModule({
