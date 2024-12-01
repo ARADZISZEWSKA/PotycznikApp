@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'select-inv-cat',
     loadChildren: () => import('./select-inv-cat/select-inv-cat.module').then( m => m.SelectInvCatPageModule)
   },
+  {
+    path: 'select-review-cat',
+    loadChildren: () => import('./select-review-cat/select-review-cat.module').then( m => m.SelectReviewCatPageModule)
+  },
 ];
 
 @NgModule({
