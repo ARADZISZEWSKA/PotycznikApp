@@ -27,6 +27,14 @@ const routes: Routes = [
     path: 'select-review-cat',
     loadChildren: () => import('./select-review-cat/select-review-cat.module').then( m => m.SelectReviewCatPageModule)
   },
+  {
+    path: 'bar-category',
+    loadChildren: () => import('./bar-category/bar-category.module').then( m => m.BarCategoryPageModule)
+  },
+  {
+    path: 'alcohol-selection',
+    loadChildren: () => import('./alcohol-selection/alcohol-selection.module').then( m => m.AlcoholSelectionPageModule)
+  },
 ];
 
 @NgModule({
