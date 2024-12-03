@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-user',
@@ -10,15 +10,19 @@ export class HomeUserPage implements OnInit {
 
   userName: string = 'Iza'; 
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {}
 
   onOptionSelected(option: string) {
     console.log('Wybrana opcja:', option);
+
+    if (option === 'Przejrzyj stan') {
+      this.router.navigate(['/select-review-cat']);
+    }
+    else if (option === 'Przeprowadź inwentaryzację') {
+      this.router.navigate(['/select-inv-cat'])
+    }
   }
 
-  onBackClick() {
-    console.log('Wróć kliknięty!');
-  }
 }

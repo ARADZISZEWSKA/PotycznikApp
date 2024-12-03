@@ -5,6 +5,7 @@
     [subHeader]="'Wybierz kategorię inwentaryzacyjną'"
     [options]="['BAR', 'KUCHNIA', 'CHEMIA']"
     (optionSelected)="onOptionSelected($event)"
-    [hasBackButton]="true">
+    [hasBackButton]="true"
+    (backClicked)="onBackClick()">
   </app-card>
 </ion-content>

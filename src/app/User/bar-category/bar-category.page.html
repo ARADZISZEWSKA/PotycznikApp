@@ -2,8 +2,9 @@
   <app-card
   [showHeader]="false"
   [subHeader]="'Wybierz podkategorię:'"
-  [options]="['BAR', 'KUCHNIA', 'CHEMIA']"
+  [options]="['ALKOHOL', 'OWOCE', 'SUCHE']"
   (optionSelected)="onOptionSelected($event)"
-  [hasBackButton]="true">
+  [hasBackButton]="true"
+  (backClicked)="onBackClick()">
   </app-card>
 </ion-content>
