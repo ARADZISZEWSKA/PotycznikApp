@@ -31,10 +31,6 @@ const routes: Routes = [
     path: 'bar-category',
     loadChildren: () => import('./User/bar-category/bar-category.module').then( m => m.BarCategoryPageModule)
   },
-  {
-    path: 'alcohol-selection',
-    loadChildren: () => import('./User/alcohol-selection/alcohol-selection.module').then( m => m.AlcoholSelectionPageModule)
-  },
 ];
 
 @NgModule({
