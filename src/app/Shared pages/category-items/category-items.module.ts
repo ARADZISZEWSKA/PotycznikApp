@@ -3,19 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { SelectReviewCatPageRoutingModule } from './select-review-cat-routing.module';
-import { SelectReviewCatPage } from './select-review-cat.page';
-
+import { CategoryItemsPageRoutingModule } from './category-items-routing.module';
+import { CategoryItemsPage } from './category-items.page';
 import { SharedModule } from '../../components/shared.module';
+
+
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SelectReviewCatPageRoutingModule,
+    CategoryItemsPageRoutingModule,
     SharedModule
   ],
-  declarations: [SelectReviewCatPage]
+  declarations: [CategoryItemsPage]
 })
-export class SelectReviewCatPageModule {}
+export class CategoryItemsPageModule {}

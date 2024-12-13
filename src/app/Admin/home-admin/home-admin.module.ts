@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { HomeAdminPageRoutingModule } from './home-admin-routing.module';
 import { HomeAdminPage } from './home-admin.page';
 
-import { SharedModule } from '../../card/shared.module';
+import { SharedModule } from '../../components/shared.module';
 
 @NgModule({
   imports: [

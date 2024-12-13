@@ -27,6 +27,11 @@ const routes: Routes = [
     path: 'select-review-cat',
     loadChildren: () => import('./Admin/select-review-cat/select-review-cat.module').then( m => m.SelectReviewCatPageModule)
   },
+  {
+    path: 'category-items',
+    loadChildren: () => import('./Shared pages/category-items/category-items.module').then( m => m.CategoryItemsPageModule)
+  },
+
 ];
 
 @NgModule({

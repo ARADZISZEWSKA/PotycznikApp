@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeUserPageModule } from './User/home-user/home-user.module'; 
 import { SelectInvCatPageModule } from './User/select-inv-cat/select-inv-cat.module';
-import { SharedModule } from './card/shared.module'; // Zaimportuj SharedModule
+import { SharedModule } from './components/shared.module'; 
 
 @NgModule({
   declarations: [AppComponent],

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeUserPage } from '../home-user/home-user.page';
-import { SharedModule } from '../../card/shared.module'; 
+import { SharedModule } from '../../components/shared.module'; 
 import { IonicModule } from '@ionic/angular';
 import { HomeUserPageRoutingModule } from './home-user-routing.module';
 

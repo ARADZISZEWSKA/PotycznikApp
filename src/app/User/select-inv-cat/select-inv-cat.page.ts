@@ -50,14 +50,21 @@ export class SelectInvCatPage implements OnInit {
 
   navigateTo(option: string) {
     console.log('Nawigacja do:', option);
-    this.closeModal(); 
-
-    if (option === 'alkohol-bar') {
-      this.router.navigate(['/alcohol-bar']);
-    } else if (option === 'bottle-storage') {
-      this.router.navigate(['/bottle-storage-selection']);
-    } else if (option === 'beer') {
-      this.router.navigate(['/beer-selection']);
+    if (this.modal) {
+      this.modal.dismiss();
+    }
+  
+    const routesMap: { [key: string]: string } = {
+      'alkohol-bar': 'bar',
+      'bottle-storage': 'bottle-storage',
+      'beer': 'beer',
+      'fruits': 'fruits',
+      'dry': 'dry',
+    };
+  
+    const category = routesMap[option];
+    if (category) {
+      this.router.navigate([`/category-items/${category}`]);
     }
   }
 

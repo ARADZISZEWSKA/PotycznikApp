@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { SelectInvCatPageRoutingModule } from './select-inv-cat-routing.module';
 
 import { SelectInvCatPage } from './select-inv-cat.page';
-import { SharedModule } from '../../card/shared.module'; // Importujemy SharedModule
+import { SharedModule } from '../../components/shared.module'; // Importujemy SharedModule
 
 
 @NgModule({
