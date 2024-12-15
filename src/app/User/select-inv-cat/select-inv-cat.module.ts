@@ -7,6 +7,7 @@ import { SelectInvCatPageRoutingModule } from './select-inv-cat-routing.module';
 
 import { SelectInvCatPage } from './select-inv-cat.page';
 import { SharedModule } from '../../components/shared.module'; // Importujemy SharedModule
+import { ProductService } from '../../Services/product.service';  // Upewnij się, że serwis jest zaimportowany
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { SharedModule } from '../../components/shared.module'; // Importujemy Sh
     IonicModule,
     SharedModule, 
     SelectInvCatPageRoutingModule
-  ]
+  ],
+  providers: [ProductService]
 })
 
 export class SelectInvCatPageModule {}
