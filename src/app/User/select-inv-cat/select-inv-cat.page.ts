@@ -126,4 +126,18 @@ export class SelectInvCatPage implements OnInit {
     this.closeModal();
     this.router.navigate(['/home-user']);
   }
+
+  goBackToCategories() {
+    // Zamknij modal z produktami, jeśli istnieje
+    if (this.productModal) {
+      this.productModal.dismiss();
+    }
+  
+    // Otwórz modal z kategoriami, jeśli istnieje
+    if (this.modal) {
+      this.modal.present();
+    }
+  }
 }
+
+

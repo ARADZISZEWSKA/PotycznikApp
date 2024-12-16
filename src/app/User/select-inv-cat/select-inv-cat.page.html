@@ -15,7 +15,7 @@
         <ion-toolbar>
           <ion-title>{{ selectedCategory ? 'Opcje: ' + selectedCategory : 'Wybierz kategorię' }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button color="light" (click)="closeModal()">Zamknij</ion-button>
+            <ion-button color="dark" (click)="closeModal()">Zamknij</ion-button>
           </ion-buttons>
         </ion-toolbar>
 
@@ -51,13 +51,13 @@
   </ion-modal>
 
   <!-- Modal z produktami -->
-  <ion-modal #productModal>
+  <ion-modal #productModal id="productModal">
     <ng-template>
       <ion-content>
         <ion-toolbar>
           <ion-title>{{ selectedCategory }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button color="light" (click)="closeProductModal()">Zamknij</ion-button>
+            <ion-button color="dark" (click)="goBackToCategories()">Zamknij</ion-button>
           </ion-buttons>
         </ion-toolbar>
 
