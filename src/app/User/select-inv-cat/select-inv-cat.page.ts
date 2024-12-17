@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
-import { ProductService } from '../../Services/product.service';  // Serwis do pobierania produktów
+import { ProductService } from '../../Services/product.service';  
 import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-select-inv-cat',
@@ -17,6 +18,7 @@ export class SelectInvCatPage implements OnInit {
   products: any[] = []; 
   selectedProduct: any = null;  
   noProductsMessage: string = '';
+  isInventoryMode: boolean = false; 
 
   // Mapowanie nazw kategorii na ID kategorii
   categoryMapping: { [key: string]: number } = {
@@ -40,10 +42,11 @@ export class SelectInvCatPage implements OnInit {
 
     if (option === 'BAR') {
       this.openModal();
-    } else {
-
-      this.closeModal();
     }
+    if(option === 'ZACZNIJ INWENTARYZACJĘ'){
+      this.router.navigate(['/edit-product'], { queryParams: { category: this.selectedCategory } });
+    } 
+  
   }
 
   openModal() {
@@ -102,18 +105,7 @@ export class SelectInvCatPage implements OnInit {
       console.error('Nie znaleziono odpowiedniego ID dla kategorii:', category);
     }
   }
-    
-  
-  
 
-  // Zamykanie modalu z produktami
-  closeProductModal() {
-    if (this.productModal) {
-      this.productModal.dismiss();
-    }
-  }
-
-  // Przejdź do szczegółów wybranego produktu
   viewProductDetails(product: any) {
     this.selectedProduct = product;
     console.log('Szczegóły produktu:', product);
@@ -128,16 +120,14 @@ export class SelectInvCatPage implements OnInit {
   }
 
   goBackToCategories() {
-    // Zamknij modal z produktami, jeśli istnieje
     if (this.productModal) {
       this.productModal.dismiss();
     }
-  
-    // Otwórz modal z kategoriami, jeśli istnieje
-    if (this.modal) {
+      if (this.modal) {
       this.modal.present();
     }
   }
+
 }
 
 

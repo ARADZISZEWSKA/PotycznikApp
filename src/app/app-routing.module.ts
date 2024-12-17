@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { EditProductComponent } from './components/edit-product/edit-product.component'; 
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: 'select-review-cat',
     loadChildren: () => import('./Admin/select-review-cat/select-review-cat.module').then( m => m.SelectReviewCatPageModule)
+  },
+
+  { 
+    path: 'edit-product', component: EditProductComponent 
   },
  
   

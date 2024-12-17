@@ -1,0 +1,125 @@
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Prowadzisz Inwentaryzację</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list class="category-list">
+        <!-- Kategoria Alkohol z podkategoriami -->
+        <ion-item (click)="toggleSubOptions('alkohol')">
+          <ion-label>ALKOHOL</ion-label>
+          <ion-icon slot="end" [name]="expandedOption === 'alkohol' ? 'chevron-up' : 'chevron-down'"></ion-icon>
+        </ion-item>
+        <div *ngIf="expandedOption === 'alkohol'" class="sub-options">
+          <ion-item (click)="openProductModal('alkohol bar')">
+            <ion-label>ALKOHOL BAR</ion-label>
+          </ion-item>
+          <ion-item (click)="openProductModal('butelki')">
+            <ion-label>BUTELKI</ion-label>
+          </ion-item>
+          <ion-item (click)="openProductModal('piwo')">
+            <ion-label>PIWO</ion-label>
+          </ion-item>
+        </div>
+        <ion-item (click)="openProductModal('owoce')">
+          <ion-label>OWOCE</ion-label>
+        </ion-item>
+        <ion-item (click)="openProductModal('suche')">
+          <ion-label>SUCHE</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+
+    <!-- Przyciski do anulowania i zakończenia inwentaryzacji -->
+    <div class="button-container">
+      <ion-button class="rounded-button cancel-button" (click)="confirmCancelInventory()" color="danger">
+        Anuluj Inwentaryzację
+      </ion-button>
+      <ion-button class="rounded-button finish-button" (click)="confirmFinishInventory()" color="primary">
+        Zakończ Inwentaryzację
+      </ion-button>
+    </div>
+  </ion-card>
+
+  <!-- Modal dla produktów -->
+  <ion-modal #productModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Edytuj Produkty</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="productModal.dismiss()">Zamknij</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <div class="product-grid">
+          <ion-card *ngFor="let product of selectedProducts">
+            <ion-card-header>
+              <ion-card-title>{{ product.name }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col>
+                  <ion-label class="quantity-label">Ilość:</ion-label>
+                  <ion-input [(ngModel)]="product.quantity" type="number" min="0" class="editable-input"></ion-input>
+                </ion-col>
+                <ion-col>
+                  <ion-label class="unit-label">Jednostka:</ion-label>
+                  <ion-input [(ngModel)]="product.unit" readonly></ion-input>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <ion-button class="rounded-button" expand="full" color="primary" (click)="saveProducts()">Zapisz</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal Potwierdzenia Anulowania -->
+  <ion-modal #cancelModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Potwierdzenie</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cancelModal.dismiss()">Zamknij</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-item>
+          <ion-label>
+            Czy na pewno chcesz anulować inwentaryzację? Wszystkie niezapisane zmiany zostaną utracone.
+          </ion-label>
+        </ion-item>
+        <ion-button class="rounded-button cancel-button" expand="full" color="danger" (click)="cancelInventory()">Anuluj</ion-button>
+        <ion-button class="rounded-button" expand="full" color="light" (click)="cancelModal.dismiss()">Wróć</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal Potwierdzenia Zakończenia Inwentaryzacji -->
+  <ion-modal #finishModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Potwierdzenie</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-item>
+          <ion-label>
+            Czy na pewno chcesz zakończyć inwentaryzację? Wszystkie zmiany zostaną zapisane.
+          </ion-label>
+        </ion-item>
+        <ion-button class="rounded-button finish-button" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>
+        <ion-button class="rounded-button" expand="full" color="light" (click)="finishModal.dismiss()">Anuluj</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
