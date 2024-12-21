@@ -6,4 +6,6 @@ export interface Product {
   unit: string;
   barcode?: string;
   expiryDate?: string | null;
+  imageUrl?: string;
+  serialNumber?: string;
 }

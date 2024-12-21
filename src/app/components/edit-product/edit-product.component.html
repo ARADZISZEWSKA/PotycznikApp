@@ -52,12 +52,19 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-
+  
       <ion-content>
         <div class="product-grid">
-          <ion-card *ngFor="let product of selectedProducts">
+          <ion-card *ngFor="let product of selectedProducts" class="product-card">
             <ion-card-header>
-              <ion-card-title>{{ product.name }}</ion-card-title>
+              <ion-card-title>
+                {{ product.name }}
+                <ion-icon
+                  name="eye"
+                  class="icon-eye"
+                  (click)="openProductDetailsModal(product)">
+                </ion-icon>
+              </ion-card-title>
             </ion-card-header>
             <ion-card-content>
               <ion-row>
@@ -73,7 +80,70 @@
             </ion-card-content>
           </ion-card>
         </div>
-        <ion-button class="rounded-button" expand="full" color="primary" (click)="saveProducts()">Zapisz</ion-button>
+      
+        <!-- Przycisk dodaj -->
+        <ion-button
+          class="add-button"
+          shape="round"
+          color="primary"
+          >
+          <ion-icon name="add"></ion-icon>
+        </ion-button>
+      
+        <!-- Przycisk zapisz -->
+        <ion-button
+          class="save-button"
+          expand="block"
+          color="primary"
+          (click)="saveProducts()">
+          Zapisz
+        </ion-button>
+      </ion-content>
+      
+    </ng-template>
+  </ion-modal>
+  
+
+  <!-- Modal Szczegóły Produktu -->
+  <ion-modal #productDetailsModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detal produktu</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeProductDetailsModal()">Zamknij</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-card>
+          <ion-card-header>
+            <!-- Zdjęcie produktu -->
+            <ion-img [src]="selectedProduct?.imageUrl || ''"></ion-img>
+            <ion-card-title>{{ selectedProduct?.name || 'Nazwa produktu' }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Wielkość:</ion-label>
+              <ion-input [value]="selectedProduct?.quantity || ''" readonly></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label>Jednostka:</ion-label>
+              <ion-input [value]="selectedProduct?.unit || ''" readonly></ion-input>
+            </ion-item>
+            <ion-item *ngIf="selectedProduct?.expiryDate">
+              <ion-label>Data ważności:</ion-label>
+              <ion-input [value]="selectedProduct?.expiryDate || ''" readonly></ion-input>
+            </ion-item>
+            <ion-item *ngIf="selectedProduct?.serialNumber">
+              <ion-label>Numer serii:</ion-label>
+              <ion-input [value]="selectedProduct?.serialNumber || ''" readonly></ion-input>
+            </ion-item>
+
+            <ion-button color="danger" expand="full" (click)="confirmDeleteProduct()">Usuń produkt</ion-button>
+          </ion-card-content>
+        </ion-card>
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -119,6 +189,25 @@
         </ion-item>
         <ion-button class="rounded-button finish-button" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>
         <ion-button class="rounded-button" expand="full" color="light" (click)="finishModal.dismiss()">Anuluj</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal Potwierdzenia Usunięcia Produktu -->
+  <ion-modal #deleteProductModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Potwierdzenie</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-item>
+          <ion-label>Czy na pewno chcesz usunąć ten produkt?</ion-label>
+        </ion-item>
+        <ion-button color="danger" expand="full" (click)="deleteProduct()">Usuń</ion-button>
+        <ion-button expand="full" (click)="closeDeleteProductModal()">Anuluj</ion-button>
       </ion-content>
     </ng-template>
   </ion-modal>

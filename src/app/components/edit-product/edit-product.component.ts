@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
 import { ProductService } from '../../Services/product.service';
 import { Router } from '@angular/router';
-import { Product } from '../../models/product.model';  // Zaimportuj model Product
+import { Product } from '../../models/product.model';
 import { InventoryRecordRequest } from 'src/app/models/inventoryRecordRequest.model';
 import { AlertController } from '@ionic/angular';
 
@@ -14,10 +14,14 @@ import { AlertController } from '@ionic/angular';
 export class EditProductComponent implements OnInit {
   @ViewChild('cancelModal') cancelModal: IonModal | undefined;
   @ViewChild('finishModal') finishModal: IonModal | undefined;
-  @ViewChild('productModal') productModal: IonModal | undefined;  // Modal dla produktów
+  @ViewChild('productModal') productModal: IonModal | undefined;
+  @ViewChild('productDetailsModal') productDetailsModal: IonModal | undefined; 
+  @ViewChild('deleteProductModal') deleteProductModal: IonModal | undefined; 
 
-  expandedOption: string | null = null; // Która kategoria jest rozwinięta
-  selectedProducts: Product[] = []; // Produkty do edycji
+  expandedOption: string | null = null;
+  selectedProducts: Product[] = [];
+  selectedProduct: Product | null = null;
+
   noProductsMessage: string | null = null;
 
   // Mapowanie kategorii na ID
@@ -26,7 +30,7 @@ export class EditProductComponent implements OnInit {
     'butelki': 8,
     'piwo': 9,
     'owoce': 5,
-    'suche': 6
+    'suche': 6,
   };
 
   constructor(
@@ -48,10 +52,10 @@ export class EditProductComponent implements OnInit {
       this.showAlert('Nieprawidłowa kategoria.', 'Brak produktów');
       return;
     }
-  
+
     this.productService.getProductsByCategory(categoryId).subscribe(
       (products) => {
-        console.log('Zapytanie dla kategorii ID:', categoryId, 'Produkty:', products); // Debugowanie
+        console.log('Zapytanie dla kategorii ID:', categoryId, 'Produkty:', products);
         if (products && products.length > 0) {
           this.selectedProducts = products;
           if (this.productModal) {
@@ -68,37 +72,80 @@ export class EditProductComponent implements OnInit {
       }
     );
   }
-  
-  
+
   async showAlert(message: string, header: string) {
     const alert = await this.alertController.create({
       header: header,
       message: message,
-      buttons: ['OK'], // Przycisk zamykający alert
-      cssClass: 'custom-alert', // Opcjonalna klasa dla dodatkowego stylowania
+      buttons: ['OK'],
+      cssClass: 'custom-alert',
     });
-  
+
     await alert.present();
   }
-  
 
   saveProducts() {
-    // Funkcja zapisu produktów
     console.log('Zapisano produkty', this.selectedProducts);
     if (this.productModal) {
       this.productModal.dismiss();
     }
   }
 
-  confirmCancelInventory() {
-    if (this.cancelModal) {
-      this.cancelModal.present();
+  openProductDetailsModal(product: Product) {
+    this.selectedProduct = product; 
+    if (this.productDetailsModal) {
+      this.productDetailsModal.present();
     }
   }
 
-  confirmFinishInventory() {
-    if (this.finishModal) {
-      this.finishModal.present();
+  closeProductDetailsModal() {
+    this.selectedProduct = null; 
+    if (this.productDetailsModal) {
+      this.productDetailsModal.dismiss();
+    }
+  }
+
+  confirmDeleteProduct() {
+    if (this.selectedProduct) {
+      const alert = this.alertController.create({
+        header: 'Potwierdź',
+        message: `Czy na pewno chcesz usunąć produkt "${this.selectedProduct.name}"?`,
+        buttons: [
+          {
+            text: 'Anuluj',
+            role: 'cancel',
+          },
+          {
+            text: 'Usuń',
+            handler: () => this.deleteProduct(),
+          },
+        ],
+      });
+      alert.then(a => a.present());
+    }
+  }
+
+  deleteProduct() {
+    if (this.selectedProduct) {
+      const index = this.selectedProducts.findIndex(p => p.id === this.selectedProduct!.id);
+      if (index !== -1) {
+        this.selectedProducts.splice(index, 1);
+      }
+      this.closeProductDetailsModal();
+      this.showAlert('Produkt został usunięty.', 'Sukces');
+    }
+  }
+
+  closeDeleteProductModal() {
+    if (this.deleteProductModal) {
+      this.deleteProductModal.dismiss();
+    }
+  }
+
+  // Funkcje związane z anulowaniem inwentaryzacji
+  confirmCancelInventory() {
+    if (this.cancelModal) {
+      this.cancelModal.present();
     }
   }
 
@@ -110,17 +157,22 @@ export class EditProductComponent implements OnInit {
     }
   }
 
+  // Funkcje związane z zakończeniem inwentaryzacji
+  confirmFinishInventory() {
+    if (this.finishModal) {
+      this.finishModal.present();
+    }
+  }
 
   finishInventory() {
-    const inventoryRecords: InventoryRecordRequest[] = this.selectedProducts.map(product => ({
+    const inventoryRecords: InventoryRecordRequest[] = this.selectedProducts.map((product) => ({
       productId: product.id,
       quantity: product.quantity,
     }));
-  
-    // Wykonaj żądanie do serwera
+
     this.productService.endInventory(inventoryRecords).subscribe(
-      (response: string) => {  // Teraz oczekujemy odpowiedzi w formacie tekstowym
-        alert(response);  // Jeśli odpowiedź to "Inwentaryzacja zakończona", wyświetlimy ją
+      (response: string) => {
+        alert(response);
         this.router.navigate(['/select-inv-cat']);
         if (this.finishModal) {
           this.finishModal.dismiss();
@@ -132,5 +184,8 @@ export class EditProductComponent implements OnInit {
       }
     );
   }
-  
+
+  openAddProductForm() {
+    this.router.navigate(['/add-product']); 
+  }
 }
