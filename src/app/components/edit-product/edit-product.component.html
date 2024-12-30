@@ -11,13 +11,13 @@
           <ion-icon slot="end" [name]="expandedOption === 'alkohol' ? 'chevron-up' : 'chevron-down'"></ion-icon>
         </ion-item>
         <div *ngIf="expandedOption === 'alkohol'" class="sub-options">
-          <ion-item (click)="openProductModal('alkohol bar')">
+          <ion-item (click)="openProductModal('Alkohol Bar')">
             <ion-label>ALKOHOL BAR</ion-label>
           </ion-item>
           <ion-item (click)="openProductModal('butelki')">
             <ion-label>BUTELKI</ion-label>
           </ion-item>
-          <ion-item (click)="openProductModal('piwo')">
+          <ion-item (click)="openProductModal('Piwo')">
             <ion-label>PIWO</ion-label>
           </ion-item>
         </div>
@@ -70,7 +70,7 @@
               <ion-row>
                 <ion-col>
                   <ion-label class="quantity-label">Ilość:</ion-label>
-                  <ion-input [(ngModel)]="product.quantity" type="number" min="0" class="editable-input"></ion-input>
+                  <ion-input [(ngModel)]="product.quantity" type="number" min="0" class="editable-input"  (ngModelChange)="onQuantityChange(product)"></ion-input>
                 </ion-col>
                 <ion-col>
                   <ion-label class="unit-label">Jednostka:</ion-label>
@@ -86,7 +86,7 @@
           class="add-button"
           shape="round"
           color="primary"
-          >
+          *ngFor="let category of categories" (click)="openAddProductForm(category.id)">
           <ion-icon name="add"></ion-icon>
         </ion-button>
       
@@ -184,7 +184,7 @@
       <ion-content>
         <ion-item>
           <ion-label>
-            Czy na pewno chcesz zakończyć inwentaryzację? Wszystkie zmiany zostaną zapisane.
+            Czy na pewno chcesz zakończyć inwentaryzację? Wszystkie zmiany zostaną zapisane finishmodal.
           </ion-label>
         </ion-item>
         <ion-button class="rounded-button finish-button" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>

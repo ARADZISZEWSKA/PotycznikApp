@@ -44,7 +44,7 @@ export class SelectInvCatPage implements OnInit {
       this.openModal();
     }
     if(option === 'ZACZNIJ INWENTARYZACJĘ'){
-      this.router.navigate(['/edit-product'], { queryParams: { category: this.selectedCategory } });
+      this.router.navigate(['/edit-product']);
     } 
   
   }

@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dodaj Produkt</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="addProduct()">
+    <!-- Pole nazwy produktu -->
+    <ion-item>
+      <ion-label position="floating">Nazwa Produktu</ion-label>
+      <ion-input [(ngModel)]="product.name" name="name" required></ion-input>
+    </ion-item>
+
+    <!-- Pole ilości -->
+    <ion-item>
+      <ion-label position="floating">Ilość</ion-label>
+      <ion-input [(ngModel)]="product.quantity" name="quantity" type="number" required></ion-input>
+    </ion-item>
+
+    <!-- Pole jednostki -->
+    <ion-item>
+      <ion-label position="floating">Jednostka</ion-label>
+      <ion-input [(ngModel)]="product.unit" name="unit" required></ion-input>
+    </ion-item>
+
+    <!-- Pole wyboru kategorii -->
+    <ion-item>
+      <ion-label position="floating">Kategoria</ion-label>
+      <ion-select [(ngModel)]="product.categoryId" name="categoryId" interface="popover" required>
+        <ion-select-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Pole wyboru pliku obrazu -->
+    <ion-item>
+      <ion-label>Wybierz Obraz</ion-label>
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+    </ion-item>
+
+    <!-- Przycisk dodawania produktu -->
+    <ion-button expand="full" type="submit">Dodaj Produkt</ion-button>
+  </form>
+</ion-content>

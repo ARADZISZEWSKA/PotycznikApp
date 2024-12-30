@@ -28,10 +28,15 @@ const routes: Routes = [
     path: 'select-review-cat',
     loadChildren: () => import('./Admin/select-review-cat/select-review-cat.module').then( m => m.SelectReviewCatPageModule)
   },
-
-  { 
-    path: 'edit-product', component: EditProductComponent 
+  {
+    path: 'edit-product',
+    loadChildren: () => import('./components/edit-product/edit-product.module').then(m => m.EditProductModule)
   },
+  {
+    path: 'add-product',
+    loadChildren: () => import('./add-product/add-product.module').then( m => m.AddProductPageModule)
+  },
+
  
   
 

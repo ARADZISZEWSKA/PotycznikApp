@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { Product } from '../../models/product.model';
 import { InventoryRecordRequest } from 'src/app/models/inventoryRecordRequest.model';
 import { AlertController } from '@ionic/angular';
+import { Category } from '../../models/Category.model';
+import { CategoryService } from 'src/app/Services/category.service';
 
 @Component({
   selector: 'app-edit-product',
@@ -21,56 +23,74 @@ export class EditProductComponent implements OnInit {
   expandedOption: string | null = null;
   selectedProducts: Product[] = [];
   selectedProduct: Product | null = null;
-
+  categories: Category[] = [];
   noProductsMessage: string | null = null;
-
-  // Mapowanie kategorii na ID
-  categoryMap: { [key: string]: number } = {
-    'alkohol bar': 7,
-    'butelki': 8,
-    'piwo': 9,
-    'owoce': 5,
-    'suche': 6,
-  };
 
   constructor(
     private productService: ProductService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private categoryService: CategoryService,
+
   ) {}
 
-  ngOnInit() {}
+  
+  ngOnInit() {
+    this.selectedProducts = this.productService.getTemporaryProducts();
+
+    this.categoryService.getCategories().subscribe(
+      (categories) => {
+        this.categories = categories;
+        console.log('Załadowane kategorie:', this.categories.map(cat => cat.name)); 
+      },
+      (error) => {
+        console.error('Błąd ładowania kategorii:', error);
+        this.showAlert('Nie udało się załadować kategorii.', 'Błąd');
+      }
+    );
+  }
 
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
   }
 
   openProductModal(category: string) {
-    const categoryId = this.categoryMap[category];
+    const categoryId = this.getCategoryIdByName(category);
     if (categoryId === undefined) {
-      console.error('Nieprawidłowa kategoria:', category);
       this.showAlert('Nieprawidłowa kategoria.', 'Brak produktów');
       return;
     }
-
+  
     this.productService.getProductsByCategory(categoryId).subscribe(
       (products) => {
-        console.log('Zapytanie dla kategorii ID:', categoryId, 'Produkty:', products);
-        if (products && products.length > 0) {
-          this.selectedProducts = products;
-          if (this.productModal) {
-            this.productModal.present();
-          }
+        const cachedProducts = this.productService.getTemporaryProducts();
+  
+        // Połącz dane z pamięci podręcznej z produktami pobranymi z API
+        this.selectedProducts = products.map(product => {
+          const cachedProduct = cachedProducts.find(p => p.id === product.id);
+          return cachedProduct ? { ...cachedProduct } : product;
+        });
+  
+        if (this.selectedProducts.length > 0) {
+          this.productModal?.present();
         } else {
-          console.log('Brak produktów w kategorii:', category);
           this.showAlert('Brak produktów w tej kategorii.', 'Informacja');
         }
       },
       (error) => {
         console.error('Błąd ładowania produktów:', error);
-        this.showAlert('Nie udało się załadować produktów.', 'Coś poszło nie tak:(');
+        this.showAlert('Nie udało się załadować produktów.', 'Błąd');
       }
     );
+  }
+  
+  
+  
+  
+  // Metoda do pobierania ID kategorii na podstawie jej nazwy
+  getCategoryIdByName(categoryName: string): number | undefined {
+    const category = this.categories.find(cat => cat.name === categoryName);
+    return category ? category.id : undefined;
   }
 
   async showAlert(message: string, header: string) {
@@ -85,12 +105,28 @@ export class EditProductComponent implements OnInit {
   }
 
   saveProducts() {
-    console.log('Zapisano produkty', this.selectedProducts);
+    const productsToSave = this.productService.getTemporaryProducts(); // Pobranie tymczasowych produktów
+    
+    console.log('Produkty do zapisania:', productsToSave);
+  
+    if (productsToSave.length === 0) {
+      this.showAlert('Brak produktów do zapisania.', 'Informacja');
+      return;
+    }
+  
+    // Dodajemy wszystkie produkty do pamięci, aby były gotowe do zapisania
+    this.productService.addTemporaryProducts(productsToSave); // Przekazujemy całą tablicę produktów
+  
+    console.log('Produkty zapisane w pamięci podręcznej:', productsToSave);
+  
+    // Zamknięcie modala, jeśli istnieje
     if (this.productModal) {
       this.productModal.dismiss();
+    } else {
+      console.warn('Modal nie został zainicjalizowany.');
     }
   }
-
+  
   openProductDetailsModal(product: Product) {
     this.selectedProduct = product; 
     if (this.productDetailsModal) {
@@ -165,27 +201,82 @@ export class EditProductComponent implements OnInit {
   }
 
   finishInventory() {
-    const inventoryRecords: InventoryRecordRequest[] = this.selectedProducts.map((product) => ({
-      productId: product.id,
-      quantity: product.quantity,
-    }));
-
+    const temporaryProducts = this.productService.getTemporaryProducts();
+  
+    if (temporaryProducts.length === 0) {
+      this.showAlert('Brak produktów do zapisania.', 'Błąd');
+      return;
+    }
+    const uniqueProducts = temporaryProducts.filter((value, index, self) =>
+      index === self.findIndex((t) => (
+        t.id === value.id && t.unit === value.unit
+      ))
+    );
+    // Mapowanie produktów do formatu InventoryRecordRequest[]
+    const inventoryRecords: InventoryRecordRequest[] = temporaryProducts
+      .filter(product => product.id !== undefined)  // Filtrujemy produkty, które mają id
+      .map(product => ({
+        productId: product.id!,  // Używamy operatora '!' aby powiedzieć, że id na pewno istnieje
+        quantity: product.quantity != null ? Number(product.quantity) : 0,  // Ustawiamy domyślną wartość 0, jeśli quantity jest null
+        unit: product.unit
+      }));
+  
+    // Przekazujemy inventoryRecords do metody endInventory
     this.productService.endInventory(inventoryRecords).subscribe(
-      (response: string) => {
-        alert(response);
-        this.router.navigate(['/select-inv-cat']);
+      (response) => {
+        console.log('Produkty zapisane do bazy:', response);
+  
+        // Zamknięcie modala
         if (this.finishModal) {
           this.finishModal.dismiss();
         }
+  
+        // Przekierowanie po zapisaniu
+        this.router.navigate(['/select-inv-cat']);
+        this.productService.clearTemporaryProducts();  // Czyszczenie danych po zakończeniu
+        // Przekierowanie po zapisaniu
       },
       (error) => {
-        console.error('Błąd podczas zapisywania inwentaryzacji:', error);
-        alert('Nie udało się zapisać inwentaryzacji.');
+        console.error('Błąd podczas zapisywania produktów:', error);
+        console.error('Pełny błąd:', error); // Dodajemy pełny błąd, aby uzyskać więcej informacji
+        this.showAlert('Nie udało się zapisać produktów.', 'Błąd');
       }
     );
   }
-
-  openAddProductForm() {
-    this.router.navigate(['/add-product']); 
+  
+  
+  // Otwieranie formularza dodawania produktu
+  openAddProductForm(categoryId: number) {
+    if (this.productModal) {
+      this.productModal.dismiss();
+    }
+    this.router.navigate(['/add-product'], { queryParams: { categoryId: categoryId } });
   }
+
+  //dodane 
+  updateProductLocally(product: Product) {
+    this.productService.addTemporaryProduct(product);
+  
+    // Zaktualizuj `selectedProducts`, aby widok był spójny
+    const index = this.selectedProducts.findIndex(p => p.id === product.id);
+    if (index !== -1) {
+      this.selectedProducts[index] = { ...product };
+    } else {
+      this.selectedProducts.push(product);
+    }
+  
+    console.log('Produkt zaktualizowany lokalnie:', product);
+    console.log('Obecna lista produktów:', this.selectedProducts);
+  }
+  
+  
+  showTemporaryProducts() {
+    const products = this.productService.getTemporaryProducts();
+    console.log('Tymczasowe produkty:', products);
+  }
+  onQuantityChange(product: Product) {
+    console.log('Zmiana ilości produktu:', product);
+    this.productService.addTemporaryProduct(product);  // Upewnij się, że produkt jest aktualizowany w pamięci
+  }
+  
 }
