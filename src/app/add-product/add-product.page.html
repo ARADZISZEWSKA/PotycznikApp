@@ -24,15 +24,16 @@
       <ion-input [(ngModel)]="product.unit" name="unit" required></ion-input>
     </ion-item>
 
-    <!-- Pole wyboru kategorii -->
-    <ion-item>
-      <ion-label position="floating">Kategoria</ion-label>
-      <ion-select [(ngModel)]="product.categoryId" name="categoryId" interface="popover" required>
-        <ion-select-option *ngFor="let category of categories" [value]="category.id">
-          {{ category.name }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+<!-- Pole wyboru kategorii -->
+<ion-item>
+  <ion-label position="floating">Kategoria</ion-label>
+  <ion-select [(ngModel)]="product.categoryId" name="categoryId" interface="popover" required>
+    <ion-select-option *ngFor="let category of categories" [value]="category.id">
+      {{ category.name }}
+    </ion-select-option>
+  </ion-select>
+</ion-item>
+
 
     <!-- Pole wyboru pliku obrazu -->
     <ion-item>

@@ -37,11 +37,15 @@ export class EditProductComponent implements OnInit {
   
   ngOnInit() {
     this.selectedProducts = this.productService.getTemporaryProducts();
-
+  
     this.categoryService.getCategories().subscribe(
       (categories) => {
         this.categories = categories;
-        console.log('Załadowane kategorie:', this.categories.map(cat => cat.name)); 
+        console.log('Załadowane kategorie:', this.categories); // Dodaj logowanie
+        if (Array.isArray(this.categories)) {
+        } else {
+          console.error('Odpowiedź nie jest tablicą:', this.categories);
+        }
       },
       (error) => {
         console.error('Błąd ładowania kategorii:', error);
@@ -49,6 +53,7 @@ export class EditProductComponent implements OnInit {
       }
     );
   }
+  
 
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
@@ -56,6 +61,7 @@ export class EditProductComponent implements OnInit {
 
   openProductModal(category: string) {
     const categoryId = this.getCategoryIdByName(category);
+    console.log('ID kategorii:', categoryId);
     if (categoryId === undefined) {
       this.showAlert('Nieprawidłowa kategoria.', 'Brak produktów');
       return;
@@ -89,6 +95,7 @@ export class EditProductComponent implements OnInit {
   
   // Metoda do pobierania ID kategorii na podstawie jej nazwy
   getCategoryIdByName(categoryName: string): number | undefined {
+    console.log('Szukam kategorii o nazwie:', categoryName);
     const category = this.categories.find(cat => cat.name === categoryName);
     return category ? category.id : undefined;
   }
@@ -251,8 +258,18 @@ export class EditProductComponent implements OnInit {
       this.productModal.dismiss();
     }
     this.router.navigate(['/add-product'], { queryParams: { categoryId: categoryId } });
+  
+    // Po dodaniu produktu, zaktualizuj listę produktów w tej kategorii
+    this.productService.getProductsByCategory(categoryId).subscribe(
+      (products) => {
+        this.selectedProducts = products; // Zaktualizuj produkty po dodaniu
+      },
+      (error) => {
+        console.error('Błąd podczas pobierania produktów po dodaniu:', error);
+      }
+    );
   }
-
+  
   //dodane 
   updateProductLocally(product: Product) {
     this.productService.addTemporaryProduct(product);

@@ -14,23 +14,32 @@
           <ion-item (click)="openProductModal('Alkohol Bar')">
             <ion-label>ALKOHOL BAR</ion-label>
           </ion-item>
-          <ion-item (click)="openProductModal('butelki')">
+          <ion-item (click)="openProductModal('Butelki')">
             <ion-label>BUTELKI</ion-label>
           </ion-item>
           <ion-item (click)="openProductModal('Piwo')">
             <ion-label>PIWO</ion-label>
           </ion-item>
         </div>
-        <ion-item (click)="openProductModal('owoce')">
+        <ion-item (click)="openProductModal('Owoce')">
           <ion-label>OWOCE</ion-label>
         </ion-item>
-        <ion-item (click)="openProductModal('suche')">
+        <ion-item (click)="openProductModal('Suche')">
           <ion-label>SUCHE</ion-label>
         </ion-item>
       </ion-list>
     </ion-card-content>
 
     <!-- Przyciski do anulowania i zakończenia inwentaryzacji -->
+     <div>
+      <ion-button
+      class="add-button"
+      shape="round"
+      color="primary"
+      *ngFor="let category of categories" (click)="openAddProductForm(category.id)">
+      <ion-icon name="add"></ion-icon>
+    </ion-button>
+  </div>
     <div class="button-container">
       <ion-button class="rounded-button cancel-button" (click)="confirmCancelInventory()" color="danger">
         Anuluj Inwentaryzację
@@ -120,7 +129,7 @@
         <ion-card>
           <ion-card-header>
             <!-- Zdjęcie produktu -->
-            <ion-img [src]="selectedProduct?.imageUrl || ''"></ion-img>
+            <ion-img [src]="selectedProduct?.image || ''"></ion-img>
             <ion-card-title>{{ selectedProduct?.name || 'Nazwa produktu' }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>

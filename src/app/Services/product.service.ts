@@ -74,8 +74,9 @@ export class ProductService {
     return this.http.get<Product[]>(`${this.baseUrl}/category/${categoryId}`);
   }
   createProduct(formData: FormData): Observable<Product> {
-    return this.http.post<Product>(this.baseUrl, formData);
+    return this.http.post<Product>(`${this.baseUrl}/add-product`, formData);
   }
+  
 
   getLastInventory(): Observable<any> {
     return this.http.get<any>('http://localhost:5099/api/inventory/last');

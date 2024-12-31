@@ -20,6 +20,7 @@ export class AddProductPage implements OnInit {
     categoryId: 0, // Domyślnie brak kategorii
     quantity: 0,
     unit: '',
+    image: '',
   };
   selectedFile: File | null = null;
 
@@ -30,47 +31,67 @@ export class AddProductPage implements OnInit {
     private categoryService: CategoryService,
     private alertController: AlertController,
     private http: HttpClient,
-
   ) {}
 
   ngOnInit(): void {
-    // Pobranie dostępnych kategorii z serwisu
-    this.categoryService.getCategories().subscribe(categories => {
-      this.categories = categories;
+    
+    // Pobranie dostępnych kategorii
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (err) => {
+        console.error('Błąd przy ładowaniu kategorii:', err);
+      },
     });
   }
-  onFileSelected(event: any): void {
+
+  // Obsługuje wybranie pliku (obrazu)
+  onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.selectedFile = file;
+      this.selectedFile = file;  // Przypisujemy wybrany plik do zmiennej
     }
   }
+  
+  // Funkcja dodawania produktu
   addProduct(): void {
     if (!this.product.categoryId) {
       alert('Kategoria jest wymagana');
       return;
     }
-
-    // Jeśli plik jest wybrany, dodaj go do form data
+  
+    // Tworzymy obiekt FormData do wysłania na serwer
     const formData = new FormData();
     formData.append('name', this.product.name);
     formData.append('quantity', this.product.quantity.toString());
     formData.append('unit', this.product.unit);
     formData.append('categoryId', this.product.categoryId.toString());
+  
+    // Dodatkowe właściwości
+    if (this.product.barcode) {
+      formData.append('barcode', this.product.barcode);
+    }
+    if (this.product.expiryDate) {
+      formData.append('expiryDate', this.product.expiryDate.toString());
+    }
+    if (this.product.serialNumber) {
+      formData.append('serialNumber', this.product.serialNumber);
+    }
     if (this.selectedFile) {
       formData.append('image', this.selectedFile, this.selectedFile.name);
     }
-
-    // Wysyłanie produktu do backendu
+  
     this.productService.createProduct(formData).subscribe({
-      next: (newProduct) => {
-        console.log('Produkt został dodany:', newProduct);
-        // Można tutaj przekierować lub wyczyścić formularz
+      next: (response) => {
+        console.log('Produkt został dodany:', response);
+        this.router.navigate(['/edit-product']);
       },
       error: (err) => {
         console.error('Błąd przy tworzeniu produktu:', err);
-      }
+        alert('Błąd przy tworzeniu produktu: ' + err.message);
+      },
     });
   }
-
-}
+  
+}  
