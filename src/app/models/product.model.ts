@@ -8,6 +8,7 @@ export interface Product {
   expiryDate?: Date | null;
   image?: string;
   serialNumber?: string;
+  isDeleted?: boolean;
 }
 
 export interface NewProduct extends Omit<Product, 'id'> {}

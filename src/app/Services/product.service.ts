@@ -12,6 +12,7 @@ export class ProductService {
   private baseUrl = 'http://localhost:5099/api/products'; 
 
   private temporaryProducts: Product[] = [];
+  private deletedProductIds: number[] = [];
 
   constructor(private http: HttpClient) {
     this.clearTemporaryProducts();
@@ -82,9 +83,15 @@ export class ProductService {
     return this.http.get<any>('http://localhost:5099/api/inventory/last');
   }
  
-  endInventory(inventoryRecords: InventoryRecordRequest[]): Observable<string> {
-    return this.http.post('http://localhost:5099/api/products/end-inventory', inventoryRecords, { responseType: 'text' });
+  endInventory(inventoryRecords: InventoryRecordRequest[], productsToDelete: number[]) {
+    return this.http.post('http://localhost:5099/api/products/end-inventory', {
+      inventoryRecords: inventoryRecords,
+      productsToDelete: productsToDelete
+    });
   }
+  
+  
+  
   
   addProduct(productData: FormData): Observable<Product> {
     return this.http.post<Product>(`${this.baseUrl}/add-product`, productData);
@@ -92,4 +99,32 @@ export class ProductService {
   updateProducts(products: Product[]): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}/update`, { products });
   }
+
+  deleteProductsFromDatabase(ids: number[]): Observable<any> {
+    console.log('Usuwanie produktów z bazy danych:', ids);
+    return this.http.delete(`${this.baseUrl}/delete`, { body: { Ids: ids } });
+  }
+  
+
+  addDeletedProduct(productId: number) {
+    if (!this.deletedProductIds.includes(productId)) {
+      this.deletedProductIds.push(productId);
+    }
+    localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
+  }
+  
+
+  // Funkcja usuwająca produkt z pamięci podręcznej
+  deleteProductLocally(productId: number): void {
+    this.deletedProductIds = this.deletedProductIds.filter(id => id !== productId);
+    localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
+  }
+  
+
+  // Funkcja zwracająca usunięte produkty z pamięci
+  getDeletedProductIds(): number[] {
+    return JSON.parse(localStorage.getItem('deletedProductIds') || '[]');
+  }
+  
+
 }

@@ -112,27 +112,36 @@ export class EditProductComponent implements OnInit {
   }
 
   saveProducts() {
-    const productsToSave = this.productService.getTemporaryProducts(); // Pobranie tymczasowych produktów
-    
-    console.log('Produkty do zapisania:', productsToSave);
+    // Pobieramy ID usuniętych produktów
+    const deletedProductIds = this.productService.getDeletedProductIds();
   
-    if (productsToSave.length === 0) {
-      this.showAlert('Brak produktów do zapisania.', 'Informacja');
+    // Pobieramy edytowane produkty (filtrujemy, by uwzględnić tylko te, które nie są usunięte)
+    const editedProducts = this.productService.getTemporaryProducts().filter(product => product.id && !deletedProductIds.includes(product.id!));
+  
+    // Jeśli nie ma żadnych produktów do zapisania (ani usuniętych, ani edytowanych)
+    if (deletedProductIds.length === 0 && editedProducts.length === 0) {
+      this.showAlert('Brak produktów do zapisania lub edycji.', 'Informacja');
       return;
     }
   
-    // Dodajemy wszystkie produkty do pamięci, aby były gotowe do zapisania
-    this.productService.addTemporaryProducts(productsToSave); // Przekazujemy całą tablicę produktów
+    // Zapisujemy edytowane produkty w pamięci (bez wywoływania backendu)
+    // Tutaj nie wykonujemy zapisu do bazy danych
+    if (editedProducts.length > 0) {
+      console.log('Edytowane produkty zapisane w pamięci:', editedProducts);
+    }
   
-    console.log('Produkty zapisane w pamięci podręcznej:', productsToSave);
+    // Usuwamy produkty w pamięci (bez wywoływania backendu)
+    if (deletedProductIds.length > 0) {
+      console.log('Produkty usunięte w pamięci:', deletedProductIds);
+    }
   
-    // Zamknięcie modala, jeśli istnieje
+    // Zamknięcie modal po zapisaniu edytowanych lub usuniętych produktów
     if (this.productModal) {
       this.productModal.dismiss();
-    } else {
-      console.warn('Modal nie został zainicjalizowany.');
     }
   }
+  
+  
   
   openProductDetailsModal(product: Product) {
     this.selectedProduct = product; 
@@ -165,17 +174,6 @@ export class EditProductComponent implements OnInit {
         ],
       });
       alert.then(a => a.present());
-    }
-  }
-
-  deleteProduct() {
-    if (this.selectedProduct) {
-      const index = this.selectedProducts.findIndex(p => p.id === this.selectedProduct!.id);
-      if (index !== -1) {
-        this.selectedProducts.splice(index, 1);
-      }
-      this.closeProductDetailsModal();
-      this.showAlert('Produkt został usunięty.', 'Sukces');
     }
   }
 
@@ -214,23 +212,31 @@ export class EditProductComponent implements OnInit {
       this.showAlert('Brak produktów do zapisania.', 'Błąd');
       return;
     }
-    const uniqueProducts = temporaryProducts.filter((value, index, self) =>
-      index === self.findIndex((t) => (
-        t.id === value.id && t.unit === value.unit
-      ))
-    );
-    // Mapowanie produktów do formatu InventoryRecordRequest[]
-    const inventoryRecords: InventoryRecordRequest[] = temporaryProducts
-      .filter(product => product.id !== undefined)  // Filtrujemy produkty, które mają id
-      .map(product => ({
-        productId: product.id!,  // Używamy operatora '!' aby powiedzieć, że id na pewno istnieje
-        quantity: product.quantity != null ? Number(product.quantity) : 0,  // Ustawiamy domyślną wartość 0, jeśli quantity jest null
-        unit: product.unit
-      }));
   
-    // Przekazujemy inventoryRecords do metody endInventory
-    this.productService.endInventory(inventoryRecords).subscribe(
+    // Podzielmy produkty na te, które muszą zostać zaktualizowane i usunięte
+    const inventoryRecords: InventoryRecordRequest[] = [];
+    const productsToDelete: number[] = [];  // Produkty oznaczone do usunięcia
+  
+    temporaryProducts.forEach(product => {
+      if (product.id !== undefined) {
+        if (product.quantity != null && !product.isDeleted) {  // Produkty do edycji
+          inventoryRecords.push({
+            productId: product.id!,
+            quantity: product.quantity != null ? Number(product.quantity) : 0,
+          });
+        }
+  
+        // Sprawdzamy, czy produkt jest oznaczony do usunięcia
+        if (product.isDeleted) {
+          productsToDelete.push(product.id!);  // Produkt do usunięcia
+        }
+      }
+    });
+  
+    // Przekazujemy inventoryRecords i produkty do usunięcia
+    this.productService.endInventory(inventoryRecords, productsToDelete).subscribe(
       (response) => {
+        console.log('Odpowiedź z backendu:', response);
         console.log('Produkty zapisane do bazy:', response);
   
         // Zamknięcie modala
@@ -241,14 +247,29 @@ export class EditProductComponent implements OnInit {
         // Przekierowanie po zapisaniu
         this.router.navigate(['/select-inv-cat']);
         this.productService.clearTemporaryProducts();  // Czyszczenie danych po zakończeniu
-        // Przekierowanie po zapisaniu
       },
       (error) => {
         console.error('Błąd podczas zapisywania produktów:', error);
-        console.error('Pełny błąd:', error); // Dodajemy pełny błąd, aby uzyskać więcej informacji
         this.showAlert('Nie udało się zapisać produktów.', 'Błąd');
       }
     );
+  }
+  
+  deleteProduct() {
+    if (this.selectedProduct) {
+      // Oznaczenie produktu jako usuniętego
+      this.selectedProduct.isDeleted = true;
+  
+      // Aktualizujemy tymczasowe produkty
+      this.productService.addTemporaryProduct(this.selectedProduct);
+  
+      // Usuwamy produkt z listy wyświetlanych produktów
+      this.selectedProducts = this.selectedProducts.filter(p => p.id !== this.selectedProduct!.id);
+  
+      // Zamykamy modal
+      this.closeProductDetailsModal();
+      this.showAlert('Produkt został oznaczony do usunięcia.', 'Sukces');
+    }
   }
   
   
