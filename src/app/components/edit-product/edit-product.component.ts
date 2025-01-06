@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
 import { ProductService } from '../../Services/product.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Product } from '../../models/product.model';
 import { InventoryRecordRequest } from 'src/app/models/inventoryRecordRequest.model';
 import { AlertController } from '@ionic/angular';
@@ -25,10 +25,12 @@ export class EditProductComponent implements OnInit {
   selectedProduct: Product | null = null;
   categories: Category[] = [];
   noProductsMessage: string | null = null;
+  modalId: string | null = null;
 
   constructor(
     private productService: ProductService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private categoryService: CategoryService,
 
@@ -52,13 +54,41 @@ export class EditProductComponent implements OnInit {
         this.showAlert('Nie udało się załadować kategorii.', 'Błąd');
       }
     );
+    this.activatedRoute.queryParams.subscribe(params => {
+      console.log('Query Params:', params); // Loguj wszystkie parametry
+      const categoryId = params['categoryId'];
+      const openModal = params['openModal'];
+      const modalId = params['modalId'];
+  
+      if (openModal && modalId === 'productModal' && categoryId) {
+        this.openProductModalByCategoryId(+categoryId); // Otwórz modal dla kategorii
+      }
+    });
+    
   }
   
 
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
   }
-
+  openProductModalByCategoryId(categoryId: number) {
+    this.productService.getProductsByCategory(categoryId).subscribe(
+      (products) => {
+        this.selectedProducts = products;
+  
+        if (this.selectedProducts.length > 0) {
+          this.productModal?.present(); // Otwórz modal
+        } else {
+          this.showAlert('Brak produktów w tej kategorii.', 'Informacja');
+        }
+      },
+      (error) => {
+        console.error('Błąd ładowania produktów:', error);
+        this.showAlert('Nie udało się załadować produktów.', 'Błąd');
+      }
+    );
+  }
+  
   openProductModal(category: string) {
     const categoryId = this.getCategoryIdByName(category);
     console.log('ID kategorii:', categoryId);
@@ -232,7 +262,7 @@ export class EditProductComponent implements OnInit {
         }
       }
     });
-  
+
     // Przekazujemy inventoryRecords i produkty do usunięcia
     this.productService.endInventory(inventoryRecords, productsToDelete).subscribe(
       (response) => {
@@ -279,16 +309,6 @@ export class EditProductComponent implements OnInit {
       this.productModal.dismiss();
     }
     this.router.navigate(['/add-product'], { queryParams: { categoryId: categoryId } });
-  
-    // Po dodaniu produktu, zaktualizuj listę produktów w tej kategorii
-    this.productService.getProductsByCategory(categoryId).subscribe(
-      (products) => {
-        this.selectedProducts = products; // Zaktualizuj produkty po dodaniu
-      },
-      (error) => {
-        console.error('Błąd podczas pobierania produktów po dodaniu:', error);
-      }
-    );
   }
   
   //dodane 

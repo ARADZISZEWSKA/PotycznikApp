@@ -1,47 +1,102 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Dodaj Produkt</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content>
-  <form (ngSubmit)="addProduct()">
-    <!-- Pole nazwy produktu -->
-    <ion-item>
-      <ion-label position="floating">Nazwa Produktu</ion-label>
-      <ion-input [(ngModel)]="product.name" name="name" required></ion-input>
-    </ion-item>
+<ion-content class="ion-padding">
+  <!-- Opakowanie formularza w ion-card -->
+  <div class="center-container">
+    <ion-card class="add-product-card">
+      <ion-card-header>
+        <ion-card-title>Dodaj Nowy Produkt</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="addProduct()">
+          <!-- Pole nazwy produktu -->
+          <ion-item>
+            <ion-label position="floating">Nazwa Produktu</ion-label>
+            <ion-input [(ngModel)]="product.name" name="name" required></ion-input>
+          </ion-item>
 
-    <!-- Pole ilości -->
-    <ion-item>
-      <ion-label position="floating">Ilość</ion-label>
-      <ion-input [(ngModel)]="product.quantity" name="quantity" type="number" required></ion-input>
-    </ion-item>
+          <!-- Pole jednostki -->
+          <ion-item>
+            <ion-label position="floating">Jednostka</ion-label>
+            <ion-input [(ngModel)]="product.unit" name="unit" required></ion-input>
+          </ion-item>
 
-    <!-- Pole jednostki -->
-    <ion-item>
-      <ion-label position="floating">Jednostka</ion-label>
-      <ion-input [(ngModel)]="product.unit" name="unit" required></ion-input>
-    </ion-item>
+          <!-- Pole wyboru kategorii -->
+          <ion-item>
+            <ion-label position="floating">Kategoria</ion-label>
+            <ion-select [(ngModel)]="product.categoryId" name="categoryId" interface="popover" required>
+              <ion-select-option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
 
-<!-- Pole wyboru kategorii -->
-<ion-item>
-  <ion-label position="floating">Kategoria</ion-label>
-  <ion-select [(ngModel)]="product.categoryId" name="categoryId" interface="popover" required>
-    <ion-select-option *ngFor="let category of categories" [value]="category.id">
-      {{ category.name }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
+          <ion-item lines="none" class="info-toggle">
+            <ion-button 
+              expand="block" 
+              shape="round" 
+              (click)="showAdditionalInfo = !showAdditionalInfo">
+              <ion-icon 
+                slot="start" 
+                [name]="showAdditionalInfo ? 'remove-circle-outline' : 'add-circle-outline'">
+              </ion-icon>
+              {{ showAdditionalInfo ? 'Ukryj dodatkowe informacje' : 'Dodaj dodatkowe informacje' }}
+            </ion-button>
+          </ion-item>
 
+          <!-- Dodatkowe pola (ukryte domyślnie) -->
+          <ng-container *ngIf="showAdditionalInfo">
+            <!-- Pole Kod kreskowy -->
+            <ion-item>
+              <ion-label position="floating">Kod kreskowy</ion-label>        
+              <ion-input [(ngModel)]="product.barcode" name="barcode" type="number"></ion-input>
+            </ion-item>
 
-    <!-- Pole wyboru pliku obrazu -->
-    <ion-item>
-      <ion-label>Wybierz Obraz</ion-label>
-      <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-    </ion-item>
+            <!-- Pole Data ważności -->
+            <ion-item>
+              <ion-label>Data Ważności</ion-label>
+              <ion-button (click)="toggleDatePicker()" expand="block" color="medium">
+                Wybierz Datę
+              </ion-button>
+            </ion-item>
+        
+            <!-- Kalendarz (ukryty, dopóki użytkownik go nie otworzy) -->
+            <div *ngIf="showDatePicker" style="margin: 16px 0;">
+              <ion-item>
+                <ion-label position="floating">Wybierz Datę</ion-label>
+                <ion-datetime [(ngModel)]="product.expiryDate" name="expiryDate" presentation="date"></ion-datetime>
+              </ion-item>
+            </div>
 
-    <!-- Przycisk dodawania produktu -->
-    <ion-button expand="full" type="submit">Dodaj Produkt</ion-button>
-  </form>
+            <!-- Pole Wybierz Obraz -->
+            <ion-item>
+              <ion-label>Dodaj Obraz</ion-label>
+              <ion-button expand="block" (click)="triggerFileInput()" color="medium">
+                Wybierz Obraz
+              </ion-button>
+              <input 
+                type="file" 
+                #fileInput 
+                (change)="onFileSelected($event)" 
+                accept="image/*" 
+                style="display: none;" 
+              />
+            </ion-item>
+            
+            <ion-text *ngIf="selectedFile" color="dark">
+              <p style="margin-top: 8px; font-size: 14px;">
+                Wybrano plik: {{ selectedFile?.name }}
+              </p>
+            </ion-text>
+          </ng-container>
+          
+          <ion-text color="danger" class="reminder-text">
+              Pamiętaj, aby dodać ilość dodawanego produktu w inwentaryzacji!
+          </ion-text>
+          
+          <!-- Przycisk Dodaj Produkt -->
+          <ion-button expand="full" type="submit">Dodaj Produkt</ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
