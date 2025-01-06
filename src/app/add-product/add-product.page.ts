@@ -30,7 +30,7 @@ export class AddProductPage implements OnInit {
   showAdditionalInfo = false;
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -39,8 +39,10 @@ export class AddProductPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    
-    // Pobranie dostępnych kategorii
+    this.activatedRoute.queryParams.subscribe(params => {
+      const categoryId = params['categoryId'];
+      console.log('Otrzymany categoryId z URL:', categoryId); // Sprawdź, co trafia do tej zmiennej
+    });
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
         this.categories = categories.filter(category => 
@@ -52,7 +54,6 @@ export class AddProductPage implements OnInit {
     });
   }
 
-  // Obsługuje wybranie pliku (obrazu)
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -70,20 +71,17 @@ export class AddProductPage implements OnInit {
     this.showDatePicker = !this.showDatePicker;
   }
 
-  // Funkcja dodawania produktu
   addProduct(): void {
     if (!this.product.categoryId) {
       alert('Kategoria jest wymagana');
       return;
     }
   
-    // Tworzymy obiekt FormData do wysłania na serwer
     const formData = new FormData();
     formData.append('name', this.product.name);
     formData.append('unit', this.product.unit);
     formData.append('categoryId', this.product.categoryId.toString());
   
-    // Dodatkowe właściwości
     if (this.product.barcode) {
       formData.append('barcode', this.product.barcode);
     }
@@ -101,13 +99,23 @@ export class AddProductPage implements OnInit {
           queryParams: { 
             categoryId: this.product.categoryId, 
             openModal: 'true', 
-            modalId: 'productModal'  // Parametr wskazujący, który modal otworzyć
+            modalId: 'productModal'
           },
         });
       },
       error: (err) => {
         console.error('Błąd przy tworzeniu produktu:', err);
         alert('Błąd przy tworzeniu produktu: ' + err.message);
+      },
+    });
+  }
+  
+  closeCard(): void {
+    this.router.navigate(['/edit-product'], {
+      queryParams: {
+        categoryId: this.product.categoryId,
+        openModal: 'true',
+        modalId: 'productModal',
       },
     });
   }

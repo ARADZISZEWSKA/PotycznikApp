@@ -39,45 +39,65 @@ export class EditProductComponent implements OnInit {
   
   ngOnInit() {
     this.selectedProducts = this.productService.getTemporaryProducts();
-  
+    
+    // Ładuj kategorie (przy pierwszym otwarciu)
     this.categoryService.getCategories().subscribe(
       (categories) => {
         this.categories = categories;
         console.log('Załadowane kategorie:', this.categories); // Dodaj logowanie
-        if (Array.isArray(this.categories)) {
-        } else {
-          console.error('Odpowiedź nie jest tablicą:', this.categories);
-        }
       },
       (error) => {
         console.error('Błąd ładowania kategorii:', error);
         this.showAlert('Nie udało się załadować kategorii.', 'Błąd');
       }
     );
+    
+    // Obsługa queryParams dla przekazywania categoryId
     this.activatedRoute.queryParams.subscribe(params => {
-      console.log('Query Params:', params); // Loguj wszystkie parametry
+      console.log('Query Params:', params); 
       const categoryId = params['categoryId'];
       const openModal = params['openModal'];
       const modalId = params['modalId'];
   
+      if (categoryId === '0' || !categoryId) {
+        // Jeśli categoryId = 0, wracamy do głównego widoku edit-product
+        // Nie wykonujemy żadnych prób ładowania produktów
+        this.productModal?.dismiss();
+        return;
+      }
+  
       if (openModal && modalId === 'productModal' && categoryId) {
-        this.openProductModalByCategoryId(+categoryId); // Otwórz modal dla kategorii
+        this.openProductModalByCategoryId(+categoryId);  // Otwórz modal dla konkretnej kategorii
       }
     });
-    
+  }
+  
+  
+  openAddProductFormwithoutID() {
+    this.router.navigate(['/add-product']);  // Przekierowanie bez categoryId
   }
   
 
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
   }
+
   openProductModalByCategoryId(categoryId: number) {
+    if (categoryId === 0) {
+      // Jeśli kategoria to 0, nie próbuj ładować produktów, po prostu wróć do głównego widoku
+      console.log('Brak wybranej kategorii (categoryId = 0), wracamy do głównego widoku.');
+      this.productModal?.dismiss();  // Zamknij modal
+      this.router.navigate(['/edit-product']);  // Przekierowanie do głównej strony
+      return;
+    }
+  
+    // W przypadku, gdy kategoria jest poprawna (inne niż 0)
     this.productService.getProductsByCategory(categoryId).subscribe(
       (products) => {
         this.selectedProducts = products;
   
         if (this.selectedProducts.length > 0) {
-          this.productModal?.present(); // Otwórz modal
+          this.productModal?.present();  // Otwórz modal, jeśli są produkty
         } else {
           this.showAlert('Brak produktów w tej kategorii.', 'Informacja');
         }
@@ -92,11 +112,13 @@ export class EditProductComponent implements OnInit {
   openProductModal(category: string) {
     const categoryId = this.getCategoryIdByName(category);
     console.log('ID kategorii:', categoryId);
+  
     if (categoryId === undefined) {
       this.showAlert('Nieprawidłowa kategoria.', 'Brak produktów');
       return;
     }
   
+    // Ładujemy produkty tylko, jeśli kategoria jest poprawna
     this.productService.getProductsByCategory(categoryId).subscribe(
       (products) => {
         const cachedProducts = this.productService.getTemporaryProducts();
@@ -108,7 +130,7 @@ export class EditProductComponent implements OnInit {
         });
   
         if (this.selectedProducts.length > 0) {
-          this.productModal?.present();
+          this.productModal?.present();  // Otwórz modal, jeśli mamy produkty
         } else {
           this.showAlert('Brak produktów w tej kategorii.', 'Informacja');
         }
@@ -120,10 +142,6 @@ export class EditProductComponent implements OnInit {
     );
   }
   
-  
-  
-  
-  // Metoda do pobierania ID kategorii na podstawie jej nazwy
   getCategoryIdByName(categoryName: string): number | undefined {
     console.log('Szukam kategorii o nazwie:', categoryName);
     const category = this.categories.find(cat => cat.name === categoryName);
@@ -171,8 +189,6 @@ export class EditProductComponent implements OnInit {
     }
   }
   
-  
-  
   openProductDetailsModal(product: Product) {
     this.selectedProduct = product; 
     if (this.productDetailsModal) {
@@ -213,7 +229,6 @@ export class EditProductComponent implements OnInit {
     }
   }
 
-  // Funkcje związane z anulowaniem inwentaryzacji
   confirmCancelInventory() {
     if (this.cancelModal) {
       this.cancelModal.present();
@@ -228,7 +243,6 @@ export class EditProductComponent implements OnInit {
     }
   }
 
-  // Funkcje związane z zakończeniem inwentaryzacji
   confirmFinishInventory() {
     if (this.finishModal) {
       this.finishModal.present();
@@ -302,16 +316,14 @@ export class EditProductComponent implements OnInit {
     }
   }
   
-  
-  // Otwieranie formularza dodawania produktu
-  openAddProductForm(categoryId: number) {
+    openAddProductForm(categoryId: number) {
+      console.log('Przekazuję categoryId:', categoryId); 
     if (this.productModal) {
       this.productModal.dismiss();
     }
     this.router.navigate(['/add-product'], { queryParams: { categoryId: categoryId } });
   }
   
-  //dodane 
   updateProductLocally(product: Product) {
     this.productService.addTemporaryProduct(product);
   

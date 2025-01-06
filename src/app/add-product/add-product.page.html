@@ -5,6 +5,9 @@
     <ion-card class="add-product-card">
       <ion-card-header>
         <ion-card-title>Dodaj Nowy Produkt</ion-card-title>
+        <ion-button class="close-button" fill="clear" (click)="closeCard()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
       </ion-card-header>
       <ion-card-content>
         <form (ngSubmit)="addProduct()">

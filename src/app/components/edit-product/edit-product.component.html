@@ -33,12 +33,12 @@
     <!-- Przyciski do anulowania i zakończenia inwentaryzacji -->
      <div>
       <ion-button
-      class="add-button"
-      shape="round"
-      color="primary"
-      *ngFor="let category of categories" (click)="openAddProductForm(category.id)">
-      <ion-icon name="add"></ion-icon>
-    </ion-button>
+        class="add-button"
+        shape="round"
+        color="primary"
+        (click)="openAddProductFormwithoutID()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
   </div>
     <div class="button-container">
       <ion-button class="rounded-button cancel-button" (click)="confirmCancelInventory()" color="danger">
