@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content class="no-scroll">
   <ion-card>
     <ion-card-header>
       <ion-card-title>Prowadzisz Inwentaryzację</ion-card-title>
@@ -28,26 +28,27 @@
           <ion-label>SUCHE</ion-label>
         </ion-item>
       </ion-list>
-    </ion-card-content>
 
-    <!-- Przyciski do anulowania i zakończenia inwentaryzacji -->
-     <div>
+      <!-- Przyciski dodawania produktów -->
       <ion-button
         class="add-button"
         shape="round"
         color="primary"
-        (click)="openAddProductFormwithoutID()">
+        *ngFor="let category of categories"
+        (click)="openAddProductForm(category.id)">
         <ion-icon name="add"></ion-icon>
       </ion-button>
-  </div>
-    <div class="button-container">
-      <ion-button class="rounded-button cancel-button" (click)="confirmCancelInventory()" color="danger">
-        Anuluj Inwentaryzację
-      </ion-button>
-      <ion-button class="rounded-button finish-button" (click)="confirmFinishInventory()" color="primary">
-        Zakończ Inwentaryzację
-      </ion-button>
-    </div>
+
+      <!-- Przyciski do anulowania i zakończenia inwentaryzacji -->
+      <div class="button-container no-scroll">
+        <ion-button class="rounded-button cancel-button" (click)="confirmCancelInventory()" color="danger">
+          Anuluj Inwentaryzację
+        </ion-button>
+        <ion-button class="rounded-button finish-button" (click)="confirmFinishInventory()" color="primary">
+          Zakończ Inwentaryzację
+        </ion-button>
+      </div>
+    </ion-card-content>
   </ion-card>
 
   <!-- Modal dla produktów -->
@@ -55,7 +56,7 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Edytuj Produkty</ion-title>
+          <ion-title>Zmień stan produktów</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="productModal.dismiss()">Zamknij</ion-button>
           </ion-buttons>
@@ -64,32 +65,43 @@
   
       <ion-content>
         <div class="product-grid">
-          <ion-card *ngFor="let product of selectedProducts" class="product-card">
-            <ion-card-header>
-              <ion-card-title>
-                {{ product.name }}
-                <ion-icon
-                  name="eye"
-                  class="icon-eye"
-                  (click)="openProductDetailsModal(product)">
-                </ion-icon>
-              </ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-row>
-                <ion-col>
-                  <ion-label class="quantity-label">Ilość:</ion-label>
-                  <ion-input [(ngModel)]="product.quantity" type="number" min="0" class="editable-input"  (ngModelChange)="onQuantityChange(product)"></ion-input>
-                </ion-col>
-                <ion-col>
-                  <ion-label class="unit-label">Jednostka:</ion-label>
-                  <ion-input [(ngModel)]="product.unit" readonly></ion-input>
-                </ion-col>
-              </ion-row>
-            </ion-card-content>
-          </ion-card>
+          <!-- Pojedynczy produkt -->
+          <div class="product-row" *ngFor="let product of selectedProducts">
+            <!-- Kolumna 1: Zdjęcie produktu -->
+            <div class="product-image">
+              <ion-img [src]="product.image || 'assets/placeholder.jpg'"></ion-img>
+            </div>
+  
+            <!-- Kolumna 2: Nazwa produktu -->
+            <div class="product-name" [ngClass]="{ 'long-text': product.name.length > 12 }">
+              <span>{{ product.name }}</span>
+            </div>
+  
+            <!-- Kolumna 3: Ilość i jednostka -->
+            <div class="product-controls">
+              <div class="quantity-control">
+                <ion-label>Ilość:</ion-label>
+                <ion-input
+                  [(ngModel)]="product.quantity"
+                  type="number"
+                  min="0"
+                  class="editable-input"
+                  (ngModelChange)="onQuantityChange(product)">
+                </ion-input>
+                <ion-input class="unit-control" [(ngModel)]="product.unit" ></ion-input>
+              </div>
+            </div>
+            
+            <div class="icon-column">
+              <ion-icon
+                name="eye"
+                class="icon-eye"
+                (click)="openProductDetailsModal(product)">
+              </ion-icon>
+            </div>
+          </div>
         </div>
-      
+  
         <!-- Przycisk dodaj -->
         <ion-button
           class="add-button"
@@ -98,7 +110,7 @@
           *ngFor="let category of categories" (click)="openAddProductForm(category.id)">
           <ion-icon name="add"></ion-icon>
         </ion-button>
-      
+
         <!-- Przycisk zapisz -->
         <ion-button
           class="save-button"
@@ -108,7 +120,6 @@
           Zapisz
         </ion-button>
       </ion-content>
-      
     </ng-template>
   </ion-modal>
   
@@ -158,50 +169,55 @@
   </ion-modal>
 
   <!-- Modal Potwierdzenia Anulowania -->
-  <ion-modal #cancelModal>
+  <ion-modal #cancelModal class="finish-modal">
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>Potwierdzenie</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cancelModal.dismiss()">Zamknij</ion-button>
-          </ion-buttons>
         </ion-toolbar>
       </ion-header>
-
+  
       <ion-content>
         <ion-item>
           <ion-label>
             Czy na pewno chcesz anulować inwentaryzację? Wszystkie niezapisane zmiany zostaną utracone.
           </ion-label>
         </ion-item>
-        <ion-button class="rounded-button cancel-button" expand="full" color="danger" (click)="cancelInventory()">Anuluj</ion-button>
-        <ion-button class="rounded-button" expand="full" color="light" (click)="cancelModal.dismiss()">Wróć</ion-button>
+  
+        <div class="button-containerfinish">
+          <ion-button class="rounded-button cancel-modal-button" expand="full" color="danger" (click)="cancelInventory()">Tak, Anuluj</ion-button>
+          <ion-button class="rounded-button cancel-button" expand="full" color="light" (click)="cancelModal.dismiss()">Wróć</ion-button>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
+  
 
   <!-- Modal Potwierdzenia Zakończenia Inwentaryzacji -->
-  <ion-modal #finishModal>
+  <ion-modal #finishModal class="finish-modal">
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>Potwierdzenie</ion-title>
         </ion-toolbar>
       </ion-header>
-
+  
       <ion-content>
         <ion-item>
           <ion-label>
-            Czy na pewno chcesz zakończyć inwentaryzację? Wszystkie zmiany zostaną zapisane finishmodal.
+            Czy na pewno chcesz zakończyć inwentaryzację? Wszystkie zmiany zostaną zapisane.
           </ion-label>
         </ion-item>
-        <ion-button class="rounded-button finish-button" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>
-        <ion-button class="rounded-button" expand="full" color="light" (click)="finishModal.dismiss()">Anuluj</ion-button>
+  
+        <div class="button-containerfinish">
+          <ion-button class="rounded-button finish-button" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>
+          <ion-button class="rounded-button cancel-button" expand="full" color="light" (click)="finishModal.dismiss()">Anuluj</ion-button>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
-
+  
+  
   <!-- Modal Potwierdzenia Usunięcia Produktu -->
   <ion-modal #deleteProductModal>
     <ng-template>
