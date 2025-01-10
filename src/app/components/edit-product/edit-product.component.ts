@@ -7,6 +7,7 @@ import { InventoryRecordRequest } from 'src/app/models/inventoryRecordRequest.mo
 import { AlertController } from '@ionic/angular';
 import { Category } from '../../models/Category.model';
 import { CategoryService } from 'src/app/Services/category.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-edit-product',
@@ -26,6 +27,7 @@ export class EditProductComponent implements OnInit {
   categories: Category[] = [];
   noProductsMessage: string | null = null;
   modalId: string | null = null;
+  productImagePath: string | null = 'images/example.jpg';
 
   constructor(
     private productService: ProductService,
@@ -33,6 +35,7 @@ export class EditProductComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private categoryService: CategoryService,
+    private sanitizer: DomSanitizer,
 
   ) {}
 
@@ -72,12 +75,15 @@ export class EditProductComponent implements OnInit {
     });
   }
   
+  getFullImageUrl(relativePath: string | undefined | null): string {
+    return this.productService.getImageUrl(relativePath || null);
+  }
   
+
   openAddProductFormwithoutID() {
     this.router.navigate(['/add-product']);  // Przekierowanie bez categoryId
   }
   
-
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
   }

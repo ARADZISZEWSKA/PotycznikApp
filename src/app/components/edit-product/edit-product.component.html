@@ -69,7 +69,7 @@
           <div class="product-row" *ngFor="let product of selectedProducts">
             <!-- Kolumna 1: Zdjęcie produktu -->
             <div class="product-image">
-              <ion-img [src]="product.image || 'assets/placeholder.jpg'"></ion-img>
+              <img [src]="getFullImageUrl(product.image)" alt="{{ product.name }}" />
             </div>
   
             <!-- Kolumna 2: Nazwa produktu -->

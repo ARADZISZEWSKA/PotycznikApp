@@ -74,11 +74,11 @@ export class ProductService {
   getProductsByCategory(categoryId: number): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.baseUrl}/category/${categoryId}`);
   }
+
   createProduct(formData: FormData): Observable<Product> {
     return this.http.post<Product>(`${this.baseUrl}/add-product`, formData);
   }
   
-
   getLastInventory(): Observable<any> {
     return this.http.get<any>('http://localhost:5099/api/inventory/last');
   }
@@ -90,12 +90,15 @@ export class ProductService {
     });
   }
   
-  
-  
-  
   addProduct(productData: FormData): Observable<Product> {
     return this.http.post<Product>(`${this.baseUrl}/add-product`, productData);
   }
+
+  getImageUrl(relativePath: string | null): string {
+    const baseUrl = 'http://localhost:5099/';
+    return relativePath ? `${baseUrl}${relativePath}` : `${baseUrl}images/placeholder.jpg`;
+}
+
   updateProducts(products: Product[]): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}/update`, { products });
   }
@@ -113,15 +116,11 @@ export class ProductService {
     localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
   }
   
-
-  // Funkcja usuwająca produkt z pamięci podręcznej
   deleteProductLocally(productId: number): void {
     this.deletedProductIds = this.deletedProductIds.filter(id => id !== productId);
     localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
   }
   
-
-  // Funkcja zwracająca usunięte produkty z pamięci
   getDeletedProductIds(): number[] {
     return JSON.parse(localStorage.getItem('deletedProductIds') || '[]');
   }
