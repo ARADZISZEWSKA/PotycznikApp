@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { EditProductComponent } from './components/edit-product/edit-product.component'; 
+import { EditProductComponent } from './User/components/edit-product/edit-product.component'; 
 
 const routes: Routes = [
   {
@@ -30,11 +30,11 @@ const routes: Routes = [
   },
   {
     path: 'edit-product',
-    loadChildren: () => import('./components/edit-product/edit-product.module').then(m => m.EditProductModule)
+    loadChildren: () => import('./User/components/edit-product/edit-product.module').then(m => m.EditProductModule)
   },
   {
     path: 'add-product',
-    loadChildren: () => import('./add-product/add-product.module').then( m => m.AddProductPageModule)
+    loadChildren: () => import('./User/add-product/add-product.module').then( m => m.AddProductPageModule)
   },
 
  

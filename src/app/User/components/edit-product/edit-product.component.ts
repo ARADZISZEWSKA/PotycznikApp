@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
-import { ProductService } from '../../Services/product.service';
+import { ProductService } from '../../../Services/product.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Product } from '../../models/product.model';
+import { Product } from '../../../models/product.model';
 import { InventoryRecordRequest } from 'src/app/models/inventoryRecordRequest.model';
 import { AlertController } from '@ionic/angular';
-import { Category } from '../../models/Category.model';
+import { Category } from '../../../models/Category.model';
 import { CategoryService } from 'src/app/Services/category.service';
 import { DomSanitizer } from '@angular/platform-browser';
 

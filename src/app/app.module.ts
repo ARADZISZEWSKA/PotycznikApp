@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeUserPageModule } from './User/home-user/home-user.module'; 
 import { SharedModule } from './components/shared.module'; 
-import { EditProductModule } from './components/edit-product/edit-product.module';
+import { EditProductModule } from './User/components/edit-product/edit-product.module';
 
 @NgModule({
   declarations: [AppComponent,],

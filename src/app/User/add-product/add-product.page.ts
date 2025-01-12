@@ -1,11 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProductService } from '../Services/product.service';
-import { Product } from '../models/product.model'; 
+import { ProductService } from '../../Services/product.service';
+import { Product } from '../../models/product.model'; 
 import { AlertController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-import { CategoryService } from '../Services/category.service';
-import { Category } from '../models/Category.model';
+import { CategoryService } from '../../Services/category.service';
+import { Category } from '../../models/Category.model';
 
 @Component({
   selector: 'app-add-product',

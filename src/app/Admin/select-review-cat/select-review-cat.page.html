@@ -7,4 +7,73 @@
     [hasBackButton]="true"
     (backClicked) = "onBackClick()">
   </app-card>
+
+ <!-- Modal z kategoriami (tylko dla BAR) -->
+  <ion-modal #modal>
+    <ng-template>
+      <ion-content>
+        <ion-toolbar>
+          <ion-title>{{ selectedCategory ? 'Produkty z: ' + selectedCategory : 'Wybierz kategorię' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button color="dark" (click)="closeModal()">Zamknij</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+
+        <ion-list>
+          <!-- Kategoria Alkohol (z rozwijanymi podkategoriami) -->
+          <ion-item (click)="toggleSubOptions('alkohol')">
+            <ion-label>ALKOHOL</ion-label>
+            <ion-icon slot="end" [name]="expandedOption === 'alkohol' ? 'chevron-up' : 'chevron-down'"></ion-icon>
+          </ion-item>
+          <div *ngIf="expandedOption === 'alkohol'" class="sub-options">
+            <ion-item (click)="loadProducts('alkohol bar')">
+              <ion-label>ALKOHOL BAR</ion-label>
+            </ion-item>
+            <ion-item (click)="loadProducts('butelki')">
+              <ion-label>BUTELKI</ion-label>
+            </ion-item>
+            <ion-item (click)="loadProducts('piwo')">
+              <ion-label>PIWO</ion-label>
+            </ion-item>
+          </div>
+
+          <ion-item (click)="loadProducts('owoce')">
+            <ion-label>OWOCE</ion-label>
+          </ion-item>
+
+          <ion-item (click)="loadProducts('suche')">
+            <ion-label>SUCHE</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal z produktami -->
+  <ion-modal #productModal id="productModal">
+    <ng-template>
+      <ion-content>
+        <ion-toolbar>
+          <ion-title>{{ selectedCategory }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button color="dark" (click)="goBackToCategories()">Zamknij</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+
+        <!-- Lista produktów -->
+        <ion-list>
+          <ion-item *ngFor="let product of products" (click)="viewProductDetails(product)">
+            <ion-label>{{ product.name }} ({{ product.quantity }} {{ product.unit }})</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <!-- Komunikat o braku produktów -->
+        <div *ngIf="noProductsMessage" class="no-products-message">
+          <ion-label>{{ noProductsMessage }}</ion-label>
+        </div>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
+
