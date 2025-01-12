@@ -13,31 +13,12 @@ export class ProductService {
 
   private temporaryProducts: Product[] = [];
   private deletedProductIds: number[] = [];
+  private temporaryProductQuantities = new Map<number, number>();
+  private previousQuantities: Map<number, number> = new Map();
 
   constructor(private http: HttpClient) {
     this.clearTemporaryProducts();
 
-  }
-
-  addTemporaryProducts(products: Product[]) {
-    const existingProducts = this.getTemporaryProducts();  // Pobieramy aktualne produkty z localStorage
-  
-    console.log('Before adding, existing products count:', existingProducts.length);
-    
-    // Filtrujemy nowe produkty, aby dodać tylko te, które jeszcze nie istnieją
-    const updatedProducts = [
-      ...existingProducts,
-      ...products.filter(newProduct => 
-        !existingProducts.some(existingProduct => 
-          existingProduct.id === newProduct.id && existingProduct.unit === newProduct.unit && existingProduct.quantity === newProduct.quantity
-        )
-      )
-    ];
-  
-    console.log('After adding, updated products count:', updatedProducts.length);
-  
-    // Zapisujemy zaktualizowaną listę produktów w localStorage
-    this.setTemporaryProducts(updatedProducts);
   }
   
   addTemporaryProduct(product: Product): void {
@@ -50,13 +31,30 @@ export class ProductService {
       // Dodawanie nowego produktu
       this.temporaryProducts.push(product);
     }
+    if (product.id !== undefined) {
+      this.getProductFromDatabase(product.id).subscribe((databaseProduct: Product) => {
+        const databaseQuantity = databaseProduct.quantity ?? 0;
+        this.setPreviousQuantityFromDatabase(product.id!, databaseQuantity);
+        console.log(`Pobrano previousQuantity (${databaseQuantity}) z bazy danych dla produktu ID: ${product.id}`);
+      });
+    }
   
     // Po dodaniu, zapisz dane w localStorage
     this.setTemporaryProducts(this.temporaryProducts);
   }
+
+  getProductFromDatabase(productId: number): Observable<Product> {
+    return this.http.get<Product>(`${this.baseUrl}/${productId}`);
+  }
   
+  setPreviousQuantityFromDatabase(productId: number, previousQuantity: number): void {
+  if (!this.previousQuantities) {
+    this.previousQuantities = new Map<number, number>();
+  }
+  this.previousQuantities.set(productId, previousQuantity);
+  }
+
   getTemporaryProducts(): Product[] {
-    // Tutaj możesz pobierać produkty z lokalnej pamięci lub np. z localStorage, jeśli używasz tego rozwiązania
     return JSON.parse(localStorage.getItem('temporaryProducts') || '[]');
   }
   
@@ -64,10 +62,10 @@ export class ProductService {
     // Zapisuje produkty w pamięci
     localStorage.setItem('temporaryProducts', JSON.stringify(products));
   }
-  // Wyczyszczenie pamięci tymczasowej po zapisaniu
+
   clearTemporaryProducts() {
-    this.temporaryProducts = [];  // Usuwamy wszystkie produkty z pamięci
-    localStorage.removeItem('temporaryProducts');  // Usuwamy dane z localStorage
+    this.temporaryProducts = []; 
+    localStorage.removeItem('temporaryProducts');  
     console.log('Temporary products have been cleared');
   }
   
@@ -78,10 +76,6 @@ export class ProductService {
   createProduct(formData: FormData): Observable<Product> {
     return this.http.post<Product>(`${this.baseUrl}/add-product`, formData);
   }
-  
-  getLastInventory(): Observable<any> {
-    return this.http.get<any>('http://localhost:5099/api/inventory/last');
-  }
  
   endInventory(inventoryRecords: InventoryRecordRequest[], productsToDelete: number[]) {
     return this.http.post('http://localhost:5099/api/products/end-inventory', {
@@ -90,40 +84,35 @@ export class ProductService {
     });
   }
   
-  addProduct(productData: FormData): Observable<Product> {
-    return this.http.post<Product>(`${this.baseUrl}/add-product`, productData);
-  }
-
   getImageUrl(relativePath: string | null): string {
     const baseUrl = 'http://localhost:5099/';
     return relativePath ? `${baseUrl}${relativePath}` : `${baseUrl}images/placeholder.jpg`;
-}
-
-  updateProducts(products: Product[]): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/update`, { products });
-  }
-
-  deleteProductsFromDatabase(ids: number[]): Observable<any> {
-    console.log('Usuwanie produktów z bazy danych:', ids);
-    return this.http.delete(`${this.baseUrl}/delete`, { body: { Ids: ids } });
-  }
-  
-
-  addDeletedProduct(productId: number) {
-    if (!this.deletedProductIds.includes(productId)) {
-      this.deletedProductIds.push(productId);
-    }
-    localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
-  }
-  
-  deleteProductLocally(productId: number): void {
-    this.deletedProductIds = this.deletedProductIds.filter(id => id !== productId);
-    localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
   }
   
   getDeletedProductIds(): number[] {
     return JSON.parse(localStorage.getItem('deletedProductIds') || '[]');
   }
   
+  setPreviousQuantity(productId: number, quantity: number): void {
+    if (!this.previousQuantities.has(productId)) {
+        this.previousQuantities.set(productId, quantity);
+        console.log(`Zapisano previousQuantity: ${quantity} dla produktu o ID ${productId}`);
+    }
+}
+
+getPreviousQuantity(productId: number): number {
+    return this.previousQuantities.get(productId) ?? 0;
+}
+
+clearPreviousQuantities(): void {
+    this.previousQuantities.clear();
+}
+
+setPreviousQuantityForInventory(productId: number, quantity: number): void {
+  if (!this.previousQuantities) {
+    this.previousQuantities = new Map<number, number>();
+  }
+  this.previousQuantities.set(productId, quantity);
+}
 
 }

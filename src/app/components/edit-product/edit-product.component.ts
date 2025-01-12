@@ -74,18 +74,14 @@ export class EditProductComponent implements OnInit {
       }
     });
   }
-  
-  getFullImageUrl(relativePath: string | undefined | null): string {
-    return this.productService.getImageUrl(relativePath || null);
-  }
-  
 
-  openAddProductFormwithoutID() {
-    this.router.navigate(['/add-product']);  // Przekierowanie bez categoryId
-  }
   
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
+  }
+
+  getFullImageUrl(relativePath: string | undefined | null): string {
+    return this.productService.getImageUrl(relativePath || null);
   }
 
   openProductModalByCategoryId(categoryId: number) {
@@ -255,6 +251,14 @@ export class EditProductComponent implements OnInit {
     }
   }
 
+  openAddProductForm(categoryId: number) {
+    console.log('Przekazuję categoryId:', categoryId); 
+  if (this.productModal) {
+    this.productModal.dismiss();
+  }
+  this.router.navigate(['/add-product'], { queryParams: { categoryId: categoryId } });
+  }
+
   finishInventory() {
     const temporaryProducts = this.productService.getTemporaryProducts();
   
@@ -269,10 +273,15 @@ export class EditProductComponent implements OnInit {
   
     temporaryProducts.forEach(product => {
       if (product.id !== undefined) {
-        if (product.quantity != null && !product.isDeleted) {  // Produkty do edycji
-          inventoryRecords.push({
+        const previousQuantity = this.productService.getPreviousQuantity(product.id!);
+
+        if (product.quantity != null && !product.isDeleted) {
+          // Pobieramy poprzednią ilość produktu z pamięci
+
+           inventoryRecords.push({
             productId: product.id!,
             quantity: product.quantity != null ? Number(product.quantity) : 0,
+            previousQuantity: previousQuantity,
           });
         }
   
@@ -296,7 +305,9 @@ export class EditProductComponent implements OnInit {
   
         // Przekierowanie po zapisaniu
         this.router.navigate(['/select-inv-cat']);
-        this.productService.clearTemporaryProducts();  // Czyszczenie danych po zakończeniu
+        this.productService.clearTemporaryProducts(); 
+        this.productService.clearPreviousQuantities();
+ // Czyszczenie danych po zakończeniu
       },
       (error) => {
         console.error('Błąd podczas zapisywania produktów:', error);
@@ -307,6 +318,10 @@ export class EditProductComponent implements OnInit {
   
   deleteProduct() {
     if (this.selectedProduct) {
+
+      const currentQuantity = this.selectedProduct.quantity ?? 0;
+      this.productService.setPreviousQuantity(this.selectedProduct.id!, currentQuantity);
+
       // Oznaczenie produktu jako usuniętego
       this.selectedProduct.isDeleted = true;
   
@@ -321,38 +336,11 @@ export class EditProductComponent implements OnInit {
       this.showAlert('Produkt został oznaczony do usunięcia.', 'Sukces');
     }
   }
-  
-    openAddProductForm(categoryId: number) {
-      console.log('Przekazuję categoryId:', categoryId); 
-    if (this.productModal) {
-      this.productModal.dismiss();
-    }
-    this.router.navigate(['/add-product'], { queryParams: { categoryId: categoryId } });
-  }
-  
-  updateProductLocally(product: Product) {
-    this.productService.addTemporaryProduct(product);
-  
-    // Zaktualizuj `selectedProducts`, aby widok był spójny
-    const index = this.selectedProducts.findIndex(p => p.id === product.id);
-    if (index !== -1) {
-      this.selectedProducts[index] = { ...product };
-    } else {
-      this.selectedProducts.push(product);
-    }
-  
-    console.log('Produkt zaktualizowany lokalnie:', product);
-    console.log('Obecna lista produktów:', this.selectedProducts);
-  }
-  
-  
-  showTemporaryProducts() {
-    const products = this.productService.getTemporaryProducts();
-    console.log('Tymczasowe produkty:', products);
-  }
+
   onQuantityChange(product: Product) {
     console.log('Zmiana ilości produktu:', product);
     this.productService.addTemporaryProduct(product);  // Upewnij się, że produkt jest aktualizowany w pamięci
   }
-  
+
+
 }
