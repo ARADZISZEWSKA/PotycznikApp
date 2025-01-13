@@ -1,0 +1,58 @@
+ion-content {
+  --background: #f5f5ff;
+}
+
+.inventory-card {
+  background-color: #e8d8ff;
+  border-radius: 15px;
+  padding: 15px;
+  max-width: 95%; 
+
+}
+.custom-grid {
+  max-width: 100%; 
+}
+
+.header-row {
+  font-weight: bold;
+  font-size: 16px;
+  color: #4a306d;
+  margin-bottom: 10px;
+}
+
+.header-label {
+  text-align: center;
+}
+
+.record-row {
+  background-color: #dcd3f7;
+  padding: 8px 0; 
+  border-radius: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.product-name {
+  font-weight: bold;
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ion-icon {
+  font-size: 20px; 
+  color: #4a306d; 
+}
+
+
+ion-card-title {
+  font-size: 20px;
+}
