@@ -20,7 +20,7 @@ export class InventoryService {
   }
 
   groupRecordsByDate(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/group-records-by-date`);
-  }
+    return this.http.post(`${this.baseUrl}/group-records-by-date`, null);
+  }  
   
 }

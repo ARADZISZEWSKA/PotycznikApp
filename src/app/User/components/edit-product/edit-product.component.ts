@@ -8,6 +8,7 @@ import { AlertController } from '@ionic/angular';
 import { Category } from '../../../models/Category.model';
 import { CategoryService } from 'src/app/Services/category.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { InventoryService } from 'src/app/Services/inventory.service';
 
 @Component({
   selector: 'app-edit-product',
@@ -36,6 +37,7 @@ export class EditProductComponent implements OnInit {
     private alertController: AlertController,
     private categoryService: CategoryService,
     private sanitizer: DomSanitizer,
+    private inventoryService: InventoryService
 
   ) {}
 
@@ -239,7 +241,7 @@ export class EditProductComponent implements OnInit {
 
   cancelInventory() {
     this.selectedProducts = [];
-    this.router.navigate(['/select-inv-cat']);
+    this.router.navigate(['/home-user']);
     if (this.cancelModal) {
       this.cancelModal.dismiss();
     }
@@ -282,6 +284,7 @@ export class EditProductComponent implements OnInit {
             productId: product.id!,
             quantity: product.quantity != null ? Number(product.quantity) : 0,
             previousQuantity: previousQuantity,
+            categoryId: product.categoryId
           });
         }
   
@@ -297,14 +300,14 @@ export class EditProductComponent implements OnInit {
       (response) => {
         console.log('Odpowiedź z backendu:', response);
         console.log('Produkty zapisane do bazy:', response);
-  
+      
         // Zamknięcie modala
         if (this.finishModal) {
           this.finishModal.dismiss();
         }
   
         // Przekierowanie po zapisaniu
-        this.router.navigate(['/select-inv-cat']);
+        this.router.navigate(['/home-user']);
         this.productService.clearTemporaryProducts(); 
         this.productService.clearPreviousQuantities();
  // Czyszczenie danych po zakończeniu
@@ -314,6 +317,10 @@ export class EditProductComponent implements OnInit {
         this.showAlert('Nie udało się zapisać produktów.', 'Błąd');
       }
     );
+    this.inventoryService.groupRecordsByDate().subscribe(
+      (groupedResponse: any) => {
+        if (groupedResponse && groupedResponse.groupedDates.length > 0) {
+          console.log('Grupowanie rekordów zakończone:', groupedResponse.groupedDates);}})
   }
   
   deleteProduct() {

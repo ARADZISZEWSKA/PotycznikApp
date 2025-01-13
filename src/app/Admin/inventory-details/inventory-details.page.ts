@@ -1,26 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { InventoryService } from '../../Services/inventory.service';
+import { CategoryService } from '../../Services/category.service';
 
 @Component({
   selector: 'app-inventory-details',
   templateUrl: './inventory-details.page.html',
   styleUrls: ['./inventory-details.page.scss'],
 })
-export class InventoryDetailsPage {
-  availableDates: string[] = [];  // Przechowujemy listę dostępnych dat
-  selectedDate: string = '';       // Wybierana data przez użytkownika
-  inventoryDetails: any = [];      // Szczegóły do wyświetlenia po wyborze daty
+export class InventoryDetailsPage implements OnInit {
+  availableDates: string[] = []; // Lista dostępnych dat
+  selectedDate: string = ''; // Wybrana data przez użytkownika
+  inventoryDetails: any = []; // Szczegóły inwentaryzacji
+  groupedInventoryDetails: any = []; // Dane pogrupowane według kategorii
+  categories: any[] = []; // Kategorie pobrane z CategoryService
 
-  constructor(private inventoryService: InventoryService) {}
+  constructor(
+    private inventoryService: InventoryService,
+    private categoryService: CategoryService
+  ) {}
 
-  
   ngOnInit() {
+    // Pobranie listy dat
     this.inventoryService.getAvailableDates().subscribe(
-      (response: any) => {  
+      (response: any) => {
         if (Array.isArray(response)) {
-          this.availableDates = response;  // backend zwraca tablicę
+          this.availableDates = response;
         } else if (response.$values) {
-          this.availableDates = response.$values;  // Obsługa JSON-a zawierającego $values
+          this.availableDates = response.$values;
         } else {
           console.error('Otrzymano nieoczekiwany format danych');
         }
@@ -29,37 +35,42 @@ export class InventoryDetailsPage {
         console.error('Błąd podczas pobierania dostępnych dat:', error);
       }
     );
+
+    // Pobranie kategorii
+    this.categoryService.getCategories().subscribe(
+      (categories: any) => {
+        this.categories = categories;
+      },
+      (error) => {
+        console.error('Błąd podczas pobierania kategorii:', error);
+      }
+    );
   }
-  
+
   fetchInventory() {
     if (this.selectedDate) {
-      console.log('Wybrana data przed formatowaniem:', this.selectedDate);  // Debug do logowania
-
-      const dateParts = this.selectedDate.split('T')[0];  // Rozdzielenie daty od godziny 'T'
-      const parts = dateParts.split('-');  // Podział na rok, miesiąc, dzień
+      const dateParts = this.selectedDate.split('T')[0];
+      const parts = dateParts.split('-');
       if (parts.length === 3) {
-        const yyyy = parts[0];
-        const mm = parts[1];
-        const dd = parts[2];
-        const formattedDate = `${yyyy}-${mm}-${dd}`;
-        console.log('Wybrana data (dd.mm.yyyy):', this.selectedDate);  // Debug do logowania
-        console.log('Wybrana data (yyyy-mm-dd):', formattedDate);  // Wydrukujemy, jak wygląda ta data w nowym formacie
+        const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`;
 
         this.inventoryService.getRecordsByDate(formattedDate).subscribe(
           (inventory: any) => {
-            console.log('Rekordy z backendu:', inventory);  // Log dla odpowiedzi backendu
-            console.log('Data z backendu:', inventory.Date);  // Zobaczmy, jaką datę zwraca backend
-
-            if (inventory && inventory.inventoryRecords && inventory.inventoryRecords.length > 0) {
+            if (inventory && inventory.inventoryRecords) {
               this.inventoryDetails = inventory.inventoryRecords;
+
+              // Grupowanie rekordów według kategorii
+              this.groupedInventoryDetails = this.groupByCategory(this.inventoryDetails);
             } else {
               this.inventoryDetails = [];
-              console.log('Brak danych dla tej daty.');
+              this.groupedInventoryDetails = [];
+              console.log('Brak rekordów dla tej daty.');
             }
           },
           (error) => {
             console.error('Błąd podczas pobierania rekordów:', error);
             this.inventoryDetails = [];
+            this.groupedInventoryDetails = [];
           }
         );
       } else {
@@ -68,7 +79,35 @@ export class InventoryDetailsPage {
     } else {
       console.log('Nie wybrano daty.');
       this.inventoryDetails = [];
+      this.groupedInventoryDetails = [];
     }
   }
 
+  /**
+   * Grupowanie rekordów według kategorii
+   */
+  groupByCategory(records: any[]): any[] {
+    const grouped = this.categories
+      .map((category) => ({
+        categoryName: category.name,
+        categoryId: category.id,
+        records: records.filter((record) => record.categoryId === category.id),
+      }))
+      .filter((group) => group.records.length > 0); // Usuń puste kategorie
+
+    // Dodanie rekordów bez kategorii
+    const uncategorizedRecords = records.filter(
+      (record) => !record.categoryId || !this.categories.find((cat) => cat.id === record.categoryId)
+    );
+
+    if (uncategorizedRecords.length > 0) {
+      grouped.push({
+        categoryName: 'Brak kategorii',
+        categoryId: null,
+        records: uncategorizedRecords,
+      });
+    }
+
+    return grouped;
+  }
 }

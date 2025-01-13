@@ -18,10 +18,10 @@ export class HomeUserPage implements OnInit {
     console.log('Wybrana opcja:', option);
 
     if (option === 'Przejrzyj stan') {
-      this.router.navigate(['/select-review-cat']);
+      this.router.navigate(['/select-inv-cat']);
     }
     else if (option === 'Przeprowadź inwentaryzację') {
-      this.router.navigate(['/select-inv-cat'])
+      this.router.navigate(['/edit-product'])
     }
   }
 

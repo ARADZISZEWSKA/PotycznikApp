@@ -3,9 +3,8 @@ ion-content {
 }
 
 .inventory-card {
-  background-color: #e8d8ff;
+  background-color: #f7f2ff;
   border-radius: 15px;
-  padding: 15px;
   max-width: 95%; 
 
 }
@@ -21,11 +20,13 @@ ion-content {
 }
 
 .header-label {
-  text-align: center;
+  text-align: left;
+  align-content: center;
+  font-size: 13px;
 }
 
 .record-row {
-  background-color: #dcd3f7;
+  background-color: #eee9ff;
   padding: 8px 0; 
   border-radius: 10px;
   margin-bottom: 10px;
@@ -35,10 +36,12 @@ ion-content {
 .product-name {
   font-weight: bold;
   text-align: left;
+  font-size: 17px;
 }
 
 .text-center {
   text-align: center;
+  font-size: 13px;
 }
 
 .icon-container {
@@ -52,6 +55,9 @@ ion-icon {
   color: #4a306d; 
 }
 
+ion-title {
+  padding: 0px;
+}
 
 ion-card-title {
   font-size: 20px;
