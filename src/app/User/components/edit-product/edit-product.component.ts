@@ -43,8 +43,7 @@ export class EditProductComponent implements OnInit {
 
   
   ngOnInit() {
-    this.selectedProducts = this.productService.getTemporaryProducts().filter(product => !product.isDeleted);
-    console.log('Produkty załadowane na starcie:', this.selectedProduct);
+    this.selectedProducts = this.productService.getTemporaryProducts();
     
     // Ładuj kategorie (przy pierwszym otwarciu)
     this.categoryService.getCategories().subscribe(

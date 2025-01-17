@@ -14,44 +14,48 @@
     </ion-select>
   </ion-item>
 
-  <!-- Rekordy dla wybranej daty podzielone na kategorie -->
-  <ion-card *ngIf="groupedInventoryDetails && groupedInventoryDetails.length > 0" class="inventory-card">
-    <ion-card-header>
-      <ion-card-title>
-        Rekordy dla {{ selectedDate | date: 'yyyy-MM-dd' }}
-      </ion-card-title>
-    </ion-card-header>
-
+<!-- Rekordy dla wybranej daty podzielone na kategorie -->
+<ion-card *ngIf="groupedInventoryDetails && groupedInventoryDetails.length > 0" class="inventory-card-main">
+  <ion-card-header>
+    <ion-card-title>
+      Rekordy dla {{ selectedDate | date: 'yyyy-MM-dd' }}
+    </ion-card-title>
+  </ion-card-header>
     <ion-card-content>
       <ion-grid class="custom-grid">
-        
-          <!-- Rekordy w kategorii -->
-          <ion-row class="header-row">
-            <ion-col size="5" class="header-label">Produkt</ion-col>
-            <ion-col size="2" class="header-label text-center">Ile było?</ion-col>
-            <ion-col size="1"></ion-col>
-            <ion-col size="2" class="header-label text-center">Ile jest?</ion-col>
-          </ion-row>
-
-        <!-- Lista kategorii -->
         <ng-container *ngFor="let group of groupedInventoryDetails">
-          <!-- Nagłówek kategorii -->
-          <ion-row class="category-header">
-            <ion-col size="12" class="category-label">
-              Kategoria: {{ group.categoryName }}
-            </ion-col>
-          </ion-row>
-
-          <ion-row *ngFor="let record of group.records" class="record-row">
-            <ion-col size="5" class="product-name">{{ record.productName }}</ion-col>
-            <ion-col size="2" class="text-center">{{ record.previousQuantity }}</ion-col>
-            <ion-col size="1" class="icon-container text-center">
-              <ion-icon name="arrow-forward-outline"></ion-icon>
-            </ion-col>
-            <ion-col size="2" class="text-center">{{ record.quantity }}</ion-col>
-          </ion-row>
-        </ng-container>
+          <ion-card class="inventory-card">
+            <ion-card-header>
+              <ion-card-title>Kategoria: {{ group.categoryName }}</ion-card-title>
+            </ion-card-header>
+            <!-- Rekordy w kategorii nie mają scrolla -->
+            <ion-card-content>
+              <ion-grid>
+                <!-- Nagłówek kolumn -->
+                <ion-row class="header-row">
+                  <ion-col size="5" class="header-label">Produkt</ion-col>
+                  <ion-col size="2" class="header-label text-center">Ile było?</ion-col>
+                  <ion-col size="1"></ion-col>
+                  <ion-col size="2" class="header-label text-center">Ile jest?</ion-col>
+                </ion-row>
+                <!-- Rekordy w kategorii -->
+                <ion-row *ngFor="let record of group.records" class="record-row">
+                  <ion-col size="5" class="product-name">{{ record.productName }}</ion-col>
+                  <ion-col size="2" class="text-center">{{ record.previousQuantity }}</ion-col>
+                  <ion-col size="1" class="icon-container text-center">
+                    <ion-icon name="arrow-forward-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col size="2" class="text-center">{{ record.quantity }}</ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </ng-container>        
       </ion-grid>
     </ion-card-content>
-  </ion-card>
+</ion-card>
+
+  <ng-template #noData>
+    <p>Brak rekordów do wyświetlenia.</p>
+  </ng-template>
 </ion-content>

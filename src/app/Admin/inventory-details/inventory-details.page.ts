@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { InventoryService } from '../../Services/inventory.service';
 import { CategoryService } from '../../Services/category.service';
 
+interface InventoryRecord {
+  categoryId: number | null;
+  productId: number;
+  date: string;
+  [key: string]: any;
+}
+
 @Component({
   selector: 'app-inventory-details',
   templateUrl: './inventory-details.page.html',
@@ -10,7 +17,7 @@ import { CategoryService } from '../../Services/category.service';
 export class InventoryDetailsPage implements OnInit {
   availableDates: string[] = []; // Lista dostępnych dat
   selectedDate: string = ''; // Wybrana data przez użytkownika
-  inventoryDetails: any = []; // Szczegóły inwentaryzacji
+  inventoryDetails: InventoryRecord[] = []; // Szczegóły inwentaryzacji
   groupedInventoryDetails: any = []; // Dane pogrupowane według kategorii
   categories: any[] = []; // Kategorie pobrane z CategoryService
 
@@ -53,18 +60,29 @@ export class InventoryDetailsPage implements OnInit {
       const parts = dateParts.split('-');
       if (parts.length === 3) {
         const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`;
-
+  
         this.inventoryService.getRecordsByDate(formattedDate).subscribe(
-          (inventory: any) => {
-            if (inventory && inventory.inventoryRecords) {
-              this.inventoryDetails = inventory.inventoryRecords;
-
-              // Grupowanie rekordów według kategorii
-              this.groupedInventoryDetails = this.groupByCategory(this.inventoryDetails);
+          (inventory: any[]) => { // Oczekujemy tablicy
+            console.log('Dane inwentaryzacji:', inventory);
+  
+            if (inventory && Array.isArray(inventory) && inventory.length > 0) {
+              // Wyciągnięcie wszystkich rekordów
+              const allRecords = inventory
+                .map((inv: any) => inv.inventoryRecords || [])
+                .reduce((acc: InventoryRecord[], records: InventoryRecord[]) => acc.concat(records), []);
+              this.inventoryDetails = allRecords;
+  
+              if (this.inventoryDetails.length > 0) {
+                // Grupowanie rekordów według kategorii
+                this.groupedInventoryDetails = this.groupByCategory(this.inventoryDetails);
+              } else {
+                console.log('Brak rekordów dla tej daty.');
+                this.groupedInventoryDetails = [];
+              }
             } else {
+              console.log('Brak rekordów dla tej daty.');
               this.inventoryDetails = [];
               this.groupedInventoryDetails = [];
-              console.log('Brak rekordów dla tej daty.');
             }
           },
           (error) => {
@@ -83,23 +101,48 @@ export class InventoryDetailsPage implements OnInit {
     }
   }
 
-  /**
-   * Grupowanie rekordów według kategorii
-   */
-  groupByCategory(records: any[]): any[] {
+  groupByCategory(records: InventoryRecord[]): any[] {
+    // Grupowanie rekordów według identyfikatora produktu i kategorii
+    const recordsByProductAndCategory = records.reduce((acc, record) => {
+      const key = `${record.categoryId}-${record.productId}`;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(record);
+      return acc;
+    }, {} as { [key: string]: InventoryRecord[] });
+  
+    // Przetwarzanie rekordów w grupach, aby znaleźć poprawne ilości
+    const processedRecords: InventoryRecord[] = Object.values(recordsByProductAndCategory)
+      .map((group) => {
+        // Sortowanie po dacie w kolejności rosnącej
+        group.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+        // Rekonstrukcja ilości na podstawie previousQuantity
+        let currentQuantity = group[0]['previousQuantity'] || 0; // Ilość początkowa
+        return group.map((record) => {
+          const updatedRecord = { ...record, currentQuantity }; // Dodanie pola currentQuantity
+          currentQuantity = record['quantity']; // Aktualizacja bieżącej ilości na podstawie rekordu
+          return updatedRecord;
+        });
+      })
+      .reduce((acc, group) => acc.concat(group), []); // Spłaszczanie tablicy grup
+  
+    // Grupowanie według kategorii
     const grouped = this.categories
       .map((category) => ({
         categoryName: category.name,
         categoryId: category.id,
-        records: records.filter((record) => record.categoryId === category.id),
+        records: processedRecords.filter((record) => record.categoryId === category.id),
       }))
       .filter((group) => group.records.length > 0); // Usuń puste kategorie
-
+  
     // Dodanie rekordów bez kategorii
-    const uncategorizedRecords = records.filter(
-      (record) => !record.categoryId || !this.categories.find((cat) => cat.id === record.categoryId)
+    const uncategorizedRecords = processedRecords.filter(
+      (record) =>
+        !record.categoryId || !this.categories.find((cat) => cat.id === record.categoryId)
     );
-
+  
     if (uncategorizedRecords.length > 0) {
       grouped.push({
         categoryName: 'Brak kategorii',
@@ -107,7 +150,17 @@ export class InventoryDetailsPage implements OnInit {
         records: uncategorizedRecords,
       });
     }
-
+  
+    console.log('Rekordy po zgrupowaniu:', grouped); // Debug
     return grouped;
+  }
+  
+  loadData(event: any) {
+    // Obsługa logiki pobierania więcej danych, na przykład doładowanie danych przy scrollowaniu
+    setTimeout(() => {
+      console.log('Data ładowana...');
+      // Tutaj dodaj logiczne doładowanie danych
+      event.target.complete();
+    }, 500); // Może być inny czas opóźnienia
   }
 }
