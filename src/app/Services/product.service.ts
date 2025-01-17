@@ -22,6 +22,8 @@ export class ProductService {
   }
   
   addTemporaryProduct(product: Product): void {
+    console.log('Dodawanie produktu:', product);
+
     const existingProductIndex = this.temporaryProducts.findIndex(p => p.id === product.id && p.unit === product.unit);
       
     if (existingProductIndex !== -1) {
@@ -56,6 +58,7 @@ export class ProductService {
 
   getTemporaryProducts(): Product[] {
     return JSON.parse(localStorage.getItem('temporaryProducts') || '[]');
+    
   }
   
   setTemporaryProducts(products: Product[]) {
@@ -70,8 +73,26 @@ export class ProductService {
   }
   
   getProductsByCategory(categoryId: number): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.baseUrl}/category/${categoryId}`);
+    return this.http.get<Product[]>(`${this.baseUrl}/category/${categoryId}`).pipe(
+      tap((products: Product[]) => {
+        // Połącz produkty z serwera z lokalnymi produktami tymczasowymi
+        this.temporaryProducts.forEach(tempProduct => {
+          const index = products.findIndex(p => p.id === tempProduct.id);
+          if (index !== -1) {
+            products[index] = tempProduct; // Nadpisz produkt
+          } else {
+            products.push(tempProduct); // Dodaj nowy produkt
+          }
+        });
+  
+        // Filtruj produkty, aby pominąć te oznaczone jako usunięte
+        const filteredProducts = products.filter(p => !p.isDeleted);
+        console.log('Produkty po filtracji:', filteredProducts);
+        return filteredProducts;
+      })
+    );
   }
+  
 
   createProduct(formData: FormData): Observable<Product> {
     return this.http.post<Product>(`${this.baseUrl}/add-product`, formData);
@@ -90,8 +111,13 @@ export class ProductService {
   }
   
   getDeletedProductIds(): number[] {
-    return JSON.parse(localStorage.getItem('deletedProductIds') || '[]');
+    const deletedIds = this.temporaryProducts
+      .filter(product => product.isDeleted) // Filtrujemy tylko produkty oznaczone jako usunięte
+      .map(product => product.id!); // Pobieramy ich ID
+    console.log('Lista usuniętych produktów:', deletedIds);
+    return deletedIds;
   }
+  
   
   setPreviousQuantity(productId: number, quantity: number): void {
     if (!this.previousQuantities.has(productId)) {
@@ -114,5 +140,23 @@ setPreviousQuantityForInventory(productId: number, quantity: number): void {
   }
   this.previousQuantities.set(productId, quantity);
 }
+
+addDeletedProduct(productId: number): void {
+  // Znajdź produkt w temporaryProducts i oznacz go jako usunięty
+  const productIndex = this.temporaryProducts.findIndex(p => p.id === productId);
+  if (productIndex !== -1) {
+    this.temporaryProducts[productIndex].isDeleted = true;
+  }
+
+  // Dodaj ID do listy usuniętych produktów
+  if (!this.deletedProductIds.includes(productId)) {
+    this.deletedProductIds.push(productId);
+  }
+
+  // Synchronizuj zmiany z localStorage
+  this.setTemporaryProducts(this.temporaryProducts);
+  localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
+}
+
 
 }

@@ -43,7 +43,8 @@ export class EditProductComponent implements OnInit {
 
   
   ngOnInit() {
-    this.selectedProducts = this.productService.getTemporaryProducts();
+    this.selectedProducts = this.productService.getTemporaryProducts().filter(product => !product.isDeleted);
+    console.log('Produkty załadowane na starcie:', this.selectedProduct);
     
     // Ładuj kategorie (przy pierwszym otwarciu)
     this.categoryService.getCategories().subscribe(
@@ -98,7 +99,7 @@ export class EditProductComponent implements OnInit {
     // W przypadku, gdy kategoria jest poprawna (inne niż 0)
     this.productService.getProductsByCategory(categoryId).subscribe(
       (products) => {
-        this.selectedProducts = products;
+        this.selectedProducts = products.filter(product => !product.isDeleted);
   
         if (this.selectedProducts.length > 0) {
           this.productModal?.present();  // Otwórz modal, jeśli są produkty
@@ -115,14 +116,15 @@ export class EditProductComponent implements OnInit {
   
   openProductModal(category: string) {
     const categoryId = this.getCategoryIdByName(category);
-    console.log('ID kategorii:', categoryId);
   
     if (categoryId === undefined) {
       this.showAlert('Nieprawidłowa kategoria.', 'Brak produktów');
       return;
     }
   
-    // Ładujemy produkty tylko, jeśli kategoria jest poprawna
+    // Wyświetl loader lub stan wczytywania przed załadowaniem danych
+    this.selectedProducts = []; // Wyczyść poprzednie produkty, aby uniknąć migotania
+  
     this.productService.getProductsByCategory(categoryId).subscribe(
       (products) => {
         const cachedProducts = this.productService.getTemporaryProducts();
@@ -133,10 +135,14 @@ export class EditProductComponent implements OnInit {
           return cachedProduct ? { ...cachedProduct } : product;
         });
   
+        // Filtrowanie produktów oznaczonych jako usunięte
+        this.selectedProducts = this.selectedProducts.filter(product => !product.isDeleted);
+  
         if (this.selectedProducts.length > 0) {
-          this.productModal?.present();  // Otwórz modal, jeśli mamy produkty
+          this.productModal?.present(); // Otwórz modal tylko, gdy są produkty
         } else {
-          this.showAlert('Brak produktów w tej kategorii.', 'Informacja');
+          this.noProductsMessage = 'Brak produktów w tej kategorii.';
+          console.warn(this.noProductsMessage);
         }
       },
       (error) => {
@@ -145,6 +151,8 @@ export class EditProductComponent implements OnInit {
       }
     );
   }
+  
+  
   
   getCategoryIdByName(categoryName: string): number | undefined {
     console.log('Szukam kategorii o nazwie:', categoryName);
@@ -269,18 +277,15 @@ export class EditProductComponent implements OnInit {
       return;
     }
   
-    // Podzielmy produkty na te, które muszą zostać zaktualizowane i usunięte
     const inventoryRecords: InventoryRecordRequest[] = [];
-    const productsToDelete: number[] = [];  // Produkty oznaczone do usunięcia
+    const productsToDelete: number[] = [];
   
     temporaryProducts.forEach(product => {
       if (product.id !== undefined) {
         const previousQuantity = this.productService.getPreviousQuantity(product.id!);
-
+  
         if (product.quantity != null && !product.isDeleted) {
-          // Pobieramy poprzednią ilość produktu z pamięci
-
-           inventoryRecords.push({
+          inventoryRecords.push({
             productId: product.id!,
             quantity: product.quantity != null ? Number(product.quantity) : 0,
             previousQuantity: previousQuantity,
@@ -288,52 +293,59 @@ export class EditProductComponent implements OnInit {
           });
         }
   
-        // Sprawdzamy, czy produkt jest oznaczony do usunięcia
         if (product.isDeleted) {
-          productsToDelete.push(product.id!);  // Produkt do usunięcia
+          productsToDelete.push(product.id!);
         }
       }
     });
-
-    // Przekazujemy inventoryRecords i produkty do usunięcia
-    this.productService.endInventory(inventoryRecords, productsToDelete).subscribe(
-      (response) => {
+  
+    this.productService.endInventory(inventoryRecords, productsToDelete).subscribe({
+      next: (response) => {
         console.log('Odpowiedź z backendu:', response);
-        console.log('Produkty zapisane do bazy:', response);
-      
-        // Zamknięcie modala
+  
+        // Grupa rekordów PO zakończeniu inwentaryzacji
+        this.inventoryService.groupRecordsByDate().subscribe({
+          next: (groupedResponse: any) => {
+            if (groupedResponse && groupedResponse.groupedDates.length > 0) {
+              console.log('Grupowanie rekordów zakończone:', groupedResponse.groupedDates);
+            } else {
+              console.error('Grupowanie nie zwróciło wyników:', groupedResponse);
+            }
+          },
+          error: (groupingError) => {
+            console.error('Błąd podczas grupowania rekordów:', groupingError);
+          }
+        });
+  
+        // Zamknij modal i przekieruj
         if (this.finishModal) {
           this.finishModal.dismiss();
         }
   
-        // Przekierowanie po zapisaniu
         this.router.navigate(['/home-user']);
-        this.productService.clearTemporaryProducts(); 
+        this.productService.clearTemporaryProducts();
         this.productService.clearPreviousQuantities();
- // Czyszczenie danych po zakończeniu
       },
-      (error) => {
+      error: (error) => {
         console.error('Błąd podczas zapisywania produktów:', error);
         this.showAlert('Nie udało się zapisać produktów.', 'Błąd');
       }
-    );
-    this.inventoryService.groupRecordsByDate().subscribe(
-      (groupedResponse: any) => {
-        if (groupedResponse && groupedResponse.groupedDates.length > 0) {
-          console.log('Grupowanie rekordów zakończone:', groupedResponse.groupedDates);}})
+    });
   }
   
   deleteProduct() {
     if (this.selectedProduct) {
-
+      console.log('Wybrany produkt do usunięcia:', this.selectedProduct);
+  
       const currentQuantity = this.selectedProduct.quantity ?? 0;
       this.productService.setPreviousQuantity(this.selectedProduct.id!, currentQuantity);
-
+  
       // Oznaczenie produktu jako usuniętego
       this.selectedProduct.isDeleted = true;
-  
-      // Aktualizujemy tymczasowe produkty
       this.productService.addTemporaryProduct(this.selectedProduct);
+
+      // Aktualizujemy tymczasowe produkty
+      this.productService.addDeletedProduct(this.selectedProduct.id!);
   
       // Usuwamy produkt z listy wyświetlanych produktów
       this.selectedProducts = this.selectedProducts.filter(p => p.id !== this.selectedProduct!.id);
@@ -341,13 +353,36 @@ export class EditProductComponent implements OnInit {
       // Zamykamy modal
       this.closeProductDetailsModal();
       this.showAlert('Produkt został oznaczony do usunięcia.', 'Sukces');
+    } else {
+      console.warn('Nie wybrano produktu do usunięcia.');
     }
   }
-
+  
   onQuantityChange(product: Product) {
     console.log('Zmiana ilości produktu:', product);
     this.productService.addTemporaryProduct(product);  // Upewnij się, że produkt jest aktualizowany w pamięci
   }
 
+  updateProductLocally(product: Product) {
+    this.productService.addTemporaryProduct(product);
+    this.selectedProducts = this.productService.getTemporaryProducts()
+    .filter(p => !p.isDeleted);
+    // Zaktualizuj `selectedProducts`, aby widok był spójny
+    const index = this.selectedProducts.findIndex(p => p.id === product.id);
+    if (index !== -1) {
+      this.selectedProducts[index] = { ...product };
+    } else {
+      this.selectedProducts.push(product);
+    }
+  
+    console.log('Produkt zaktualizowany lokalnie:', product);
+    console.log('Obecna lista produktów:', this.selectedProducts);
+  }
+  
+  
+  showTemporaryProducts() {
+    const products = this.productService.getTemporaryProducts();
+    console.log('Tymczasowe produkty:', products);
+  }
 
 }
