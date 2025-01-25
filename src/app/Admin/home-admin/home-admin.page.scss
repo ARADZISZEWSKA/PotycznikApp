@@ -1,0 +1,8 @@
+html, body {
+    height: 100%;
+    overflow: hidden; 
+  }
+  
+ion-content {
+    --overflow-y: hidden !important;
+}

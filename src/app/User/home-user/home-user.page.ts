@@ -20,6 +20,9 @@ export class HomeUserPage implements OnInit {
     if (option === 'Przejrzyj stan') {
       this.router.navigate(['/select-inv-cat']);
     }
+    if (option === 'Dodaj stratę') {
+      this.router.navigate(['/losses']);
+    }
     else if (option === 'Przeprowadź inwentaryzację') {
       this.router.navigate(['/edit-product'])
     }

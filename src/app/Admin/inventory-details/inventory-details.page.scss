@@ -93,6 +93,11 @@ ion-card-title {
   font-size: 20px;
 }
 
+ion-back-button {
+  color: #555; /* Ciemno-szary kolor tekstu */
+  font-size: 14px; /* Zmniejszenie rozmiaru tekstu */
+}
+
 @media (max-width: 740px) {
   .product-name {
     font-size: 15px; /* Zmniejszony rozmiar czcionki */

@@ -20,6 +20,9 @@ export class ProductService {
     this.clearTemporaryProducts();
 
   }
+  getAllProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.baseUrl}`);
+  }
   
   addTemporaryProduct(product: Product): void {
     console.log('Dodawanie produktu:', product);

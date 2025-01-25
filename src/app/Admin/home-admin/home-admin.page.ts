@@ -17,9 +17,13 @@ export class HomeAdminPage implements OnInit {
   
   onOptionSelected(option: string) {
     console.log('Wybrana opcja:', option);
-    if (option === 'Przejrzyj stan') {
+    if (option === 'Stan') {
       this.router.navigate(['/select-review-cat']); 
-    } else if (option === 'Dodaj użytkownika') {
+    } if (option === 'Inwentaryzacje') {
+      this.router.navigate(['/inventory-details']); 
+    }if (option === 'Starty') {
+      this.router.navigate(['/losses']); 
+    }else if (option === 'Dodaj użytkownika') {
       this.router.navigate(['/add-user']); 
     }
   }
