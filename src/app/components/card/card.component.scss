@@ -1,6 +1,6 @@
 ion-content {
   --overflow-y: hidden;
-  --background: #d8b4f3;
+  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
 }
 
 .card {
@@ -51,14 +51,12 @@ ion-col {
   font-size: 1.2rem;
   color: #555555;
   text-align: left;
-  margin-bottom: 10px;
 }
 
 .header {
   font-size: 1.5rem;
   color: #000000;
   font-weight: bold;
-  margin-bottom: 20px;
   text-align: left;
 }
 
@@ -73,7 +71,8 @@ ion-col {
 }
 
 .option-card {
-  background-color: #e9d5f7;
+  background-color: #060b3f;
+  color: #d6d6d6;
   border-radius: 10px;
   padding: 15px;
   font-size: 1.2rem;
@@ -91,7 +90,7 @@ ion-col {
 
 .option-card:hover {
   transform: scale(1.05);
-  background-color: #d3bce9;
+  background-color: #0b1369;
 }
 
 /* Media Queries */

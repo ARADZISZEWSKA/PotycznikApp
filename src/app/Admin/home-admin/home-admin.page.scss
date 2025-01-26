@@ -6,3 +6,7 @@ html, body {
 ion-content {
     --overflow-y: hidden !important;
 }
+
+ion-header {
+  --margin-bottom: 0px;
+}

@@ -11,6 +11,9 @@ ion-content {
   justify-content: space-between;
 }
 
+.ion-content-main {
+  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+}
 .no-scroll{
   --overflow: hidden;
 }
@@ -286,6 +289,7 @@ ion-card-content {
 }
 
 .finish-modal {
+  --background: #f9f9f9;
   --height: 200px;
   --min-height: 200px;
   overflow: hidden;
@@ -330,6 +334,7 @@ ion-card-content {
   ion-content {
     --background: #f9f9f9;
     position: relative;
+    height: 100%;
   }
 
   .image-container {

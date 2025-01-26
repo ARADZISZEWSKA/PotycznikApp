@@ -8,6 +8,9 @@ ion-content {
   --overflow: hidden !important;
 }
 
+.main {
+  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+}
 
 .inventory-card-main {
   display: flex;
@@ -17,7 +20,7 @@ ion-content {
   overflow-y: auto  !important;;
   max-height: calc(100vh - 140px);
   border-radius: 15px;
-  background-color: #f7f2ff;
+  background-color: #f8f8f8;
   max-width: 95%;
   position: relative;
 }
@@ -51,7 +54,7 @@ ion-content {
 }
 
 .record-row {
-  background-color: #eee9ff;
+  background-color: #8aadff42;
   padding: 8px 0; 
   border-radius: 10px;
   margin-bottom: 10px;

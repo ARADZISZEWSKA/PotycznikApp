@@ -39,9 +39,10 @@ const routes: Routes = [
   {
     path: 'inventory-details',
     loadChildren: () => import('./Admin/inventory-details/inventory-details.module').then( m => m.InventoryDetailsPageModule)
-  },  {
+  },
+  {
     path: 'losses',
-    loadChildren: () => import('./Admin/losses/losses.module').then( m => m.LossesPageModule)
+    loadChildren: () => import('./User/losses/losses.module').then( m => m.LossesPageModule)
   },
   {
     path: 'register',

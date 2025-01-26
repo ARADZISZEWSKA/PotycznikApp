@@ -2,14 +2,14 @@
   <ion-toolbar>
     <ion-title>Sprawdź inwentaryzację</ion-title>
     <ion-buttons slot="start">
-      <ion-back-button text="Powrót" defaultHref="/home-admin"></ion-back-button>
+      <ion-back-button class="color-text" text="Powrót" defaultHref="/home-admin"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="main">
   <!-- Wybór daty -->
-  <ion-item>
+  <ion-item class="ion-item-top">
     <ion-select label="Wybierz datę:" [(ngModel)]="selectedDate" (ionChange)="fetchInventory()">
       <ion-select-option *ngFor="let date of availableDates" [value]="date">
         {{ date | date:'dd-MM-yyyy' }}
