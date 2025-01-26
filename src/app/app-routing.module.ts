@@ -43,6 +43,10 @@ const routes: Routes = [
     path: 'losses',
     loadChildren: () => import('./Admin/losses/losses.module').then( m => m.LossesPageModule)
   },
+  {
+    path: 'register',
+    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+  },
 
 
 

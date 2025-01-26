@@ -151,8 +151,6 @@ export class EditProductComponent implements OnInit {
     );
   }
   
-  
-  
   getCategoryIdByName(categoryName: string): number | undefined {
     console.log('Szukam kategorii o nazwie:', categoryName);
     const category = this.categories.find(cat => cat.name === categoryName);

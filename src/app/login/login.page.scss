@@ -2,11 +2,8 @@ body {
   margin: 0;
 }
 
-.login-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+ion-card {
+  width: 80%;
 }
 
 .flex-center {
@@ -14,11 +11,137 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh; /* Ustaw wysokość na 100% widoku */
+  height: 100vh;
 }
 
 ion-content {
   width: 100%;
   height: 100%;
-  --background: url('/assets/shapes.svg') no-repeat center center / cover;
+  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+}
+
+.login-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.welcome-message {
+  text-align: center;
+  padding: 0 20px;
+}
+
+.recovery-button {
+  width: auto;
+  font-size: 12px;
+  text-align: left;
+  padding: 0;
+  padding-left: 20px;
+}
+
+.login {
+  width: auto;
+  max-width: 250px;
+  padding: 0 20px;
+  font-size: 1rem;
+  display: block;
+  margin: 0 auto;
+}
+
+.register-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-text {
+  font-size: 0.9rem;
+  color: #666; 
+  margin: 0px;
+}
+
+.register {
+  font-size: 0.9rem;
+  color: #3880ff; 
+  text-transform: initial;
+  padding: 0;
+  padding-bottom: 1px;
+  margin: 0px;
+}
+
+ion-card-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+ion-text {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.modal-content {
+  padding: 20px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-height: 70%;
+  height: auto;
+}
+
+ion-modal {
+  --height: 70%;
+  --width: 80%;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal::part(backdrop) {
+  background: rgba(209, 213, 219, 0.7);
+  opacity: 1;
+}
+
+.modal-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.modal-content .buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.modal-content ion-button {
+  width: 48%;
+  font-size: 1rem;
+}
+
+.invalid {
+  border: 1px solid red;
 }

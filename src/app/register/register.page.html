@@ -1,0 +1,91 @@
+<ion-content [fullscreen]="true">
+  <div class="flex-center">
+    <ion-card shape="round">
+      <ion-card-header class="small-header">
+        <div class="login-header">
+          <div style="display: block; text-align: center; padding: 10px 20px;">
+            <ion-card-title class="ion-padding-top">
+              Witaj w Potyczniku!
+            </ion-card-title>
+            <ion-text class="ion-padding-small" color="">
+              Inwentaryzacja w nowym wydaniu 
+            </ion-text>
+            <ion-text color="tertiary">Zaczynajmy!</ion-text>
+          </div>
+        </div> 
+      </ion-card-header>
+
+      <ion-card-content class="data-input">
+        <ion-item>
+          <ion-input 
+            class="input"
+            type="text" 
+            label="Imię" 
+            labelPlacement="floating" 
+            placeholder="Enter your first name" [(ngModel)]="firstName" (ngModelChange)="checkFormValidity()">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input 
+            class="input"
+            type="text" 
+            label="Nazwisko" 
+            labelPlacement="floating" 
+            placeholder="Enter your last name" [(ngModel)]="lastName" (ngModelChange)="checkFormValidity()">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input 
+            class="input"
+            type="email" 
+            label="Email" 
+            labelPlacement="floating" 
+            placeholder="Enter your email" [(ngModel)]="email" (ngModelChange)="checkFormValidity()">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input 
+            class="input"
+            type="password" 
+            label="Hasło" 
+            labelPlacement="floating" 
+            placeholder="Enter your password" 
+            minlength="8" [(ngModel)]="password" (ngModelChange)="checkFormValidity()">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input 
+            class="input"
+            type="password" 
+            label="Potwierdź hasło" 
+            labelPlacement="floating" 
+            placeholder="Confirm your password" 
+            minlength="8" [(ngModel)]="confirmPassword" (ngModelChange)="checkFormValidity()">
+          </ion-input>
+        </ion-item>
+      </ion-card-content>
+
+      <ion-card-content>
+        <ion-button 
+          [class.active]="isFormValid" 
+          [disabled]="!isFormValid" 
+          (click)="onRegister()">
+          Zarejestruj się
+        </ion-button>
+      </ion-card-content>
+
+      <ion-card-content class="text-footer">
+        Masz już konto?
+      </ion-card-content>
+
+      <ion-button class="ion-padding-bottom" fill="clear" expand="block" shape="round" color="tertiary" (click)="onLogin()">
+        Zaloguj się
+      </ion-button>
+
+    </ion-card>
+  </div>
+</ion-content>
