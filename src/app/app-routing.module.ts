@@ -47,7 +47,11 @@ const routes: Routes = [
   {
     path: 'register',
     loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+  },  {
+    path: 'review-loss',
+    loadChildren: () => import('./Admin/review-loss/review-loss.module').then( m => m.ReviewLossPageModule)
   },
+
 
 
 

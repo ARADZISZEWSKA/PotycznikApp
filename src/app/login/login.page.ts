@@ -12,6 +12,8 @@ export class HomePage {
   recoveryForm: FormGroup;
   isFormValid: boolean = false;
   isModalOpen: boolean = false;
+  email: string = '';  
+  password: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -20,7 +22,7 @@ export class HomePage {
   {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      password: ['', [Validators.required, Validators.minLength(5)]]
     });
 
     this.recoveryForm = this.formBuilder.group({
@@ -33,10 +35,12 @@ export class HomePage {
   }
 
   onLogin() {
-    if (this.loginForm.valid) {
-      console.log('Login success', this.loginForm.value);
+    if (this.email === 'admin@wp.pl') {
+      this.router.navigate(['/home-admin']); 
+    } else if (this.email === 'user@wp.pl') {
+      this.router.navigate(['/home-user']);   
     } else {
-      console.log('Form is invalid');
+      console.log('Email nie pasuje do żadnej roli');
     }
   }
 

@@ -16,10 +16,10 @@
 
       <ion-card-content>
         <ion-item>
-          <ion-input type="email" label="Email" labelPlacement="floating" placeholder=""></ion-input>
+          <ion-input [(ngModel)]="email" type="email" label="Email" labelPlacement="floating" placeholder=""></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input type="password" label="Hasło" labelPlacement="floating" placeholder=""></ion-input>
+          <ion-input [(ngModel)]="password" type="password" label="Hasło" labelPlacement="floating" placeholder=""></ion-input>
         </ion-item>
       </ion-card-content>
 
@@ -36,7 +36,7 @@
           class="login" 
           expand="block" 
           shape="round" 
-          color="tertiary" 
+          color="tertiary"
           (click)="onLogin()">
           Zaloguj
         </ion-button>

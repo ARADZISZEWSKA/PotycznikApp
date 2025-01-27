@@ -28,4 +28,8 @@ export class HomeUserPage implements OnInit {
     }
   }
 
+  logout() {
+    this.router.navigate(['/login']); 
+  }
+
 }

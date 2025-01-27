@@ -16,6 +16,10 @@ export class LossesService {
 
   constructor(private http: HttpClient) {}
 
+  getLosses(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+
   createLoss(loss: LossDto): Observable<any> {
     return this.http.post(this.apiUrl, loss);
   }

@@ -1,0 +1,112 @@
+.losses-card {
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    width: 85%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.loss-card {
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    width: 100%;
+    max-height: 250px; 
+}
+
+.loss-card ion-card-header {
+    background-color: #e9ecef;
+    border-bottom: 1px solid #ccc;
+}
+
+.loss-card ion-card-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.loss-card ion-card-content {
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 5px 0;
+}
+
+.header-row {
+    font-weight: bold;
+    text-align: center;
+    background-color: #f1f1f1;
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.header-row ion-col {
+    padding: 5px;
+}
+
+.record-row {
+    margin-top: 5px;
+    padding: 5px 0;
+    font-size: 12px;
+}
+
+.custom-grid {
+    padding: 10px;
+    margin: 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.loss-card {
+    margin-bottom: 5px;
+}
+
+ion-card {
+    --padding-start: 0px;
+    --padding-end: 0px;
+    width: 90%;
+    height: 90%;
+}
+
+ion-row {
+    margin: 5px 0;
+}
+
+ion-col {
+    padding: 0 5px;
+}
+
+ion-content {
+    --overflow-y: hidden;
+    --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+ion-title {
+    font-weight: 500;
+    font-size: 19px;
+ }
+
+.custom-toolbar {
+    --background: black;
+    --color: white; 
+    --border-color: transparent;
+    box-shadow: none !important; 
+  }
+  
+  .custom-back-button {
+    color: white !important; 
+    font-size: 13px;
+  }
+  
+  

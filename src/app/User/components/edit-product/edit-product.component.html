@@ -134,9 +134,15 @@
             <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
           </ion-button>
           <img
-            [src]="getFullImageUrl(selectedProduct?.image)"
-            alt="Zdjęcie produktu"
-            onerror="this.src='assets/placeholder.png'" />
+          *ngIf="selectedProduct && !selectedProduct.isDeleted" 
+          [src]="getFullImageUrl(selectedProduct?.image)" 
+          alt="Zdjęcie produktu" 
+          onerror="this.src='assets/placeholder.png'" />
+        
+        <!-- Domyślny obraz, jeśli produkt jest usunięty -->
+        <img *ngIf="selectedProduct && selectedProduct.isDeleted" 
+          src="assets/placeholder.png" 
+          alt="Produkt usunięty" />
         </div>
   
         <div class="details-container">

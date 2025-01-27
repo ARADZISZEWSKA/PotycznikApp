@@ -21,8 +21,8 @@ export class HomeAdminPage implements OnInit {
       this.router.navigate(['/select-review-cat']); 
     } if (option === 'Inwentaryzacje') {
       this.router.navigate(['/inventory-details']); 
-    }if (option === 'Starty') {
-      this.router.navigate(['/losses']); 
+    }if (option === 'Straty') {
+      this.router.navigate(['/review-loss']); 
     }else if (option === 'Dodaj użytkownika') {
       this.router.navigate(['/add-user']); 
     }
@@ -31,4 +31,9 @@ export class HomeAdminPage implements OnInit {
   onBackClick() {
     console.log('Wróć kliknięty!');
   }
+
+  logout() {
+    this.router.navigate(['/login']); 
+  }
+
 }
