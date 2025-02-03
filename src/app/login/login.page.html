@@ -27,7 +27,7 @@
         class="recovery-button" 
         size="small" 
         fill="clear" 
-        (click)="openRecoveryModal()">
+        >
         Odzyskaj hasło
       </ion-button>   
 
@@ -55,30 +55,4 @@
       </ion-card-content>
     </ion-card>
   </div>
-
-
-  <!-- Modal Okno -->
-  <ion-modal [isOpen]="isModalOpen" (willDismiss)="closeModal()">
-    <ng-template>
-      <div class="modal-content">
-        <h2>Odzyskiwanie hasła</h2>
-        <p>Aby odzyskać hasło, wpisz email, na który wyślemy link do odzyskania hasła.</p>
-        <form [formGroup]="recoveryForm" (ngSubmit)="onRecoverySubmit()">
-          <ion-item>
-            <ion-input 
-              type="email" 
-              placeholder="Twój email" 
-              formControlName="email"
-              [ngClass]="{'invalid': recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched}">
-            </ion-input>
-          </ion-item>
-          <div class="buttons">
-            <ion-button fill="outline" color="danger" (click)="closeModal()">Anuluj</ion-button>
-            <ion-button type="submit" [disabled]="recoveryForm.invalid">Wyślij</ion-button>
-          </div>
-        </form>
-      </div>
-    </ng-template>
-  </ion-modal>
-
 </ion-content>

@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Product } from '../models/product.model';
 import { InventoryRecordRequest } from '../models/inventoryRecordRequest.model';  // Nowy model
-import { Category } from '../models/Category.model';
 
 @Injectable({
   providedIn: 'root'

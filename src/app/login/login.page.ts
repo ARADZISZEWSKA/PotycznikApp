@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../Services/auth.service';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular'; 
 
 @Component({
   selector: 'app-home',
@@ -8,60 +9,45 @@ import { Router } from '@angular/router';
   styleUrls: ['login.page.scss'],
 })
 export class HomePage {
-  loginForm: FormGroup;
-  recoveryForm: FormGroup;
-  isFormValid: boolean = false;
-  isModalOpen: boolean = false;
-  email: string = '';  
+  email: string = '';
   password: string = '';
 
   constructor(
-    private formBuilder: FormBuilder,
+    private authService: AuthService, 
     private router: Router,
-  ) 
-  {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(5)]]
-    });
+    private alertController: AlertController
+    ) {}
 
-    this.recoveryForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]]
-    });
-
-    this.loginForm.valueChanges.subscribe(() => {
-      this.isFormValid = this.loginForm.valid;
-    });
-  }
-
-  onLogin() {
-    if (this.email === 'admin@wp.pl') {
-      this.router.navigate(['/home-admin']); 
-    } else if (this.email === 'user@wp.pl') {
-      this.router.navigate(['/home-user']);   
-    } else {
-      console.log('Email nie pasuje do żadnej roli');
+    async presentAlert(header: string, subHeader: string, message: string, isSuccess: boolean) {
+      const alert = await this.alertController.create({
+        header: header,
+        subHeader: subHeader,
+        message: message,
+        buttons: ['OK'],
+        cssClass: isSuccess ? 'alert-success' : 'alert-error',  
+      });
+      await alert.present();
+    }
+  
+    onLogin() {
+      if (!this.email || !this.password) {
+        this.presentAlert('Błąd logowania', '', 'Wypełnij wszystkie pola', false);
+        return;
+      }
+  
+      this.authService.login(this.email, this.password).subscribe({
+        next: (res) => {
+          localStorage.setItem('user', JSON.stringify(res));
+          this.router.navigate(['/home-admin']);
+          this.presentAlert('Zalogowano pomyślnie!', '', '', true); 
+        },
+        error: (err) => {
+          this.presentAlert('Błąd logowania', '', err.error, false); 
+        }
+      });
+    }
+  
+    onRegister() {
+      this.router.navigate(['/register']);
     }
   }
-
-  openRecoveryModal() {
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
-  }
-
-  onRecoverySubmit() {
-    if (this.recoveryForm.valid) {
-      console.log('Recovery email sent to', this.recoveryForm.value.email);
-      this.closeModal();
-    } else {
-      console.log('Invalid email');
-    }
-  }
-
-  onRegister() {
-    this.router.navigate(['/register']);
-  }
-}

@@ -13,7 +13,17 @@ import { EditProductModule } from './User/components/edit-product/edit-product.m
 
 @NgModule({
   declarations: [AppComponent,],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HomeUserPageModule, HttpClientModule, SharedModule, EditProductModule, FormsModule, ReactiveFormsModule,],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule, 
+    HomeUserPageModule, 
+    HttpClientModule, 
+    SharedModule,
+    EditProductModule, 
+    FormsModule, 
+    ReactiveFormsModule, 
+   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
