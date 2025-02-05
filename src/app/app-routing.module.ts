@@ -51,6 +51,10 @@ const routes: Routes = [
     path: 'review-loss',
     loadChildren: () => import('./Admin/review-loss/review-loss.module').then( m => m.ReviewLossPageModule)
   },
+  {
+    path: 'add-user',
+    loadChildren: () => import('./Admin/add-user/add-user.module').then( m => m.AddUserPageModule)
+  },
 
 
 

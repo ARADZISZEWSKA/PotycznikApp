@@ -1,0 +1,119 @@
+ion-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0;
+  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+  background-size: cover;
+}
+
+ion-card {
+  width: 85%;
+  max-width: 600px;
+  height: auto;
+  max-height: 80vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: auto;
+  margin-top: 10%;
+}
+
+ion-card-header {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+ion-card-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #333;
+  text-align: left;
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+ion-grid, ion-row, ion-col {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  align-content: center;
+}
+
+.ion-text-start {
+  justify-items: center;
+}
+
+ion-card-content {
+  padding: 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+ion-label {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+ion-input {
+  font-size: 1rem;
+}
+
+.confirm {
+  margin-top: 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  padding: 12px 0;
+}
+
+.goBack-button {
+  color: gray;
+  font-size: 1.1rem;
+}
+
+.goBack-button:hover {
+  background-color: #e0e0e0;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin: 4px 0;
+}
+
+@media (max-width: 480px) {
+  ion-card {
+    width: 85%;
+    max-width: 90%;
+    max-height: 90vh;
+  }
+
+  ion-card-title {
+    font-size: 1.25rem;
+  }
+
+  ion-label {
+    font-size: 0.9rem;
+  }
+
+  ion-button {
+    font-size: 1rem;
+    padding: 12px 0;
+  }
+
+  .goBack-button {
+    font-size: 1.1rem;
+    padding: 0;
+  }
+}

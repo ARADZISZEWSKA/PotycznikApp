@@ -18,8 +18,8 @@ export class AuthService {
   }
 
   registerUser(user: RegisterUserDto, adminId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register-user?adminId=${adminId}`, user);
-  }
+    return this.http.post(`${this.apiUrl}/register-user?adminId=${adminId}`, user, { responseType: 'text' as 'json' });
+  }  
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, { email, password });

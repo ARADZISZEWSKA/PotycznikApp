@@ -183,7 +183,7 @@
           </div>
   
           <!-- Przycisk usunięcia -->
-          <button class="delete-button" (click)="confirmDeleteProduct()">
+          <button class="delete-button" shape="round" (click)="confirmDeleteProduct()">
             Usuń produkt
           </button>
         </div>
@@ -209,8 +209,8 @@
         </ion-item>
   
         <div class="button-containerfinish">
-          <ion-button class="rounded-button cancel-modal-button" expand="full" color="danger" (click)="cancelInventory()">Tak, Anuluj</ion-button>
-          <ion-button class="rounded-button cancel-button" expand="full" color="light" (click)="cancelModal.dismiss()">Wróć</ion-button>
+          <ion-button class="rounded-button cancel-modal-button" shape="round" expand="full" color="danger" (click)="cancelInventory()">Tak, Anuluj</ion-button>
+          <ion-button class="rounded-button cancel-button" shape="round" expand="full" color="light" (click)="cancelModal.dismiss()">Wróć</ion-button>
         </div>
       </ion-content>
     </ng-template>
@@ -234,8 +234,8 @@
         </ion-item>
   
         <div class="button-containerfinish">
-          <ion-button class="rounded-button finish-button" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>
-          <ion-button class="rounded-button cancel-button" expand="full" color="light" (click)="finishModal.dismiss()">Anuluj</ion-button>
+          <ion-button class="rounded-button finish-button" shape="round" expand="full" color="primary" (click)="finishInventory()">Zakończ</ion-button>
+          <ion-button class="rounded-button cancel-button" shape="round" expand="full" color="light" (click)="finishModal.dismiss()">Anuluj</ion-button>
         </div>
       </ion-content>
     </ng-template>
@@ -256,7 +256,7 @@
           <ion-label>Czy na pewno chcesz usunąć ten produkt?</ion-label>
         </ion-item>
         <ion-button color="danger" expand="full" (click)="deleteProduct()">Usuń</ion-button>
-        <ion-button expand="full" (click)="closeDeleteProductModal()">Anuluj</ion-button>
+        <ion-button expand="full" shape="round" (click)="closeDeleteProductModal()">Anuluj</ion-button>
       </ion-content>
     </ng-template>
   </ion-modal>

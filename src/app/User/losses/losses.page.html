@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-content>
+  <ion-content class="modal">
     <ion-card class="loss-card">
       <ion-card-header>
         <ion-grid>
@@ -38,7 +38,7 @@
             <ion-input formControlName="reason"></ion-input>
           </ion-item>
   
-          <ion-button expand="full" type="submit" [disabled]="!lossForm.valid">Dodaj stratę</ion-button>
+          <ion-button expand="full" shape="round" type="submit" [disabled]="!lossForm.valid">Dodaj stratę</ion-button>
         </form>
       </ion-card-content>
     </ion-card>

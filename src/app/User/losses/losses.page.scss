@@ -3,6 +3,10 @@ html, body {
   overflow: hidden;
 }
 
+.modal { 
+  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+}
+
 ion-content {
   display: flex;
   justify-content: center;
@@ -11,7 +15,6 @@ ion-content {
   padding: 0;
   --background: #f5f5ff;
   --overflow: hidden !important;
-  --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
 }
 
 .loss-card {
