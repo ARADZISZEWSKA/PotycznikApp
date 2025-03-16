@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  
+  apiUrl: 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api'
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file
