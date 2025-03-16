@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface LossDto {
   productName: string; 
@@ -12,7 +13,7 @@ export interface LossDto {
   providedIn: 'root'
 })
 export class LossesService {
-  private apiUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/Losses'; // Adres API backendu
+  private apiUrl = environment.apiUrl + '/Losses'; 
 
   constructor(private http: HttpClient) {}
 

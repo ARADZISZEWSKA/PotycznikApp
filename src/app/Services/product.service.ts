@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { Product } from '../models/product.model';
 import { InventoryRecordRequest } from '../models/inventoryRecordRequest.model';  // Nowy model
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/products'; 
+  private baseUrl = environment.apiUrl + '/products'; 
 
   private temporaryProducts: Product[] = [];
   private deletedProductIds: number[] = [];
@@ -100,16 +101,15 @@ export class ProductService {
   }
  
   endInventory(inventoryRecords: InventoryRecordRequest[], productsToDelete: number[]) {
-    return this.http.post('https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/products/end-inventory', {
+    return this.http.post(`${environment.apiUrl}/products/end-inventory`, {
       inventoryRecords: inventoryRecords,
       productsToDelete: productsToDelete
     });
   }
   
   getImageUrl(relativePath: string | null): string {
-    const baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/';
-    return relativePath ? `${baseUrl}${relativePath}` : `${baseUrl}images/placeholder.jpg`;
-  }
+    return relativePath ? `${environment.apiUrl}${relativePath}` : `${environment.apiUrl}images/placeholder.jpg`;
+}
   
   getDeletedProductIds(): number[] {
     const deletedIds = this.temporaryProducts

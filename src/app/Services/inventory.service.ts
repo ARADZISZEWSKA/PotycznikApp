@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventoryService {
 
-  private baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/inventoryRecords';  // URL do kontrolera InventoryRecords
+  private baseUrl = environment.apiUrl + '/inventoryRecords';
 
   constructor(private http: HttpClient) { }
 

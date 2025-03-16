@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api'
+  apiUrl: 'https://localhost:7157/api'
 };
 
 

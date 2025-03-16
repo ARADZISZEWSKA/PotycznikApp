@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { RegisterUserDto } from '../Dto/register-user.dto';
-
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/auth';
+  private apiUrl = environment.apiUrl + '/auth';
 
   constructor(private http: HttpClient) {}
 
