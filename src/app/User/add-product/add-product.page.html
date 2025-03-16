@@ -48,11 +48,19 @@
 
           <!-- Dodatkowe pola (ukryte domyślnie) -->
           <ng-container *ngIf="showAdditionalInfo">
+
             <!-- Pole Kod kreskowy -->
             <ion-item>
               <ion-label position="floating">Kod kreskowy</ion-label>        
               <ion-input [(ngModel)]="product.barcode" name="barcode" type="number"></ion-input>
             </ion-item>
+            <ion-button (click)="scanBarcode()" expand="block" color="primary">
+              <ion-icon name="barcode-outline"></ion-icon> Zeskanuj
+            </ion-button>
+
+            <ion-text *ngIf="product.barcode">
+              <p><strong>Zeskanowany kod:</strong> {{ product.barcode }}</p>
+            </ion-text>
 
             <!-- Pole Data ważności -->
             <ion-item>
@@ -73,17 +81,24 @@
             <!-- Pole Wybierz Obraz -->
             <ion-item>
               <ion-label>Dodaj Obraz</ion-label>
-              <ion-button expand="block" (click)="triggerFileInput()" color="medium">
-                Wybierz Obraz
+              <ion-button fill="outline" (click)="triggerFileInput()" color="medium">
+                <ion-icon name="image-outline"></ion-icon> Wybierz Obraz
               </ion-button>
-              <input 
-                type="file" 
-                #fileInput 
-                (change)="onFileSelected($event)" 
-                accept="image/*" 
-                style="display: none;" 
-              />
             </ion-item>
+            <input 
+              type="file" 
+              #fileInput 
+              (change)="onFileSelected($event)" 
+              accept="image/*" 
+              style="display: none;" 
+            />
+            <ion-text *ngIf="selectedFile" color="dark">
+              <p style="margin-top: 8px; font-size: 14px; text-align: center;">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                Wybrano plik: <strong>{{ selectedFile?.name }}</strong>
+              </p>
+            </ion-text>
+            
             
             <ion-text *ngIf="selectedFile" color="dark">
               <p style="margin-top: 8px; font-size: 14px;">

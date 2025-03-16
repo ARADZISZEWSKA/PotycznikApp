@@ -8,7 +8,7 @@ import { InventoryRecordRequest } from '../models/inventoryRecordRequest.model';
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:5099/api/products'; 
+  private baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/products'; 
 
   private temporaryProducts: Product[] = [];
   private deletedProductIds: number[] = [];
@@ -95,20 +95,19 @@ export class ProductService {
     );
   }
   
-
   createProduct(formData: FormData): Observable<Product> {
     return this.http.post<Product>(`${this.baseUrl}/add-product`, formData);
   }
  
   endInventory(inventoryRecords: InventoryRecordRequest[], productsToDelete: number[]) {
-    return this.http.post('http://localhost:5099/api/products/end-inventory', {
+    return this.http.post('https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/products/end-inventory', {
       inventoryRecords: inventoryRecords,
       productsToDelete: productsToDelete
     });
   }
   
   getImageUrl(relativePath: string | null): string {
-    const baseUrl = 'http://localhost:5099/';
+    const baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/';
     return relativePath ? `${baseUrl}${relativePath}` : `${baseUrl}images/placeholder.jpg`;
   }
   
@@ -119,8 +118,7 @@ export class ProductService {
     console.log('Lista usuniętych produktów:', deletedIds);
     return deletedIds;
   }
-  
-  
+    
   setPreviousQuantity(productId: number, quantity: number): void {
     if (!this.previousQuantities.has(productId)) {
         this.previousQuantities.set(productId, quantity);
@@ -158,6 +156,10 @@ addDeletedProduct(productId: number): void {
   // Synchronizuj zmiany z localStorage
   this.setTemporaryProducts(this.temporaryProducts);
   localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
+}
+
+getProductByBarcode(barcode: string): Observable<Product> {
+  return this.http.get<Product>(`${this.baseUrl}/barcode/${barcode}`)
 }
 
 

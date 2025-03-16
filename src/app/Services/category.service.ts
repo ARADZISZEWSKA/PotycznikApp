@@ -8,7 +8,7 @@ import { Category } from '../models/Category.model';
     providedIn: 'root', 
   })
   export class CategoryService {
-    private baseUrl = 'http://localhost:5099/api/categories';
+    private baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/categories';
   
     constructor(private http: HttpClient) {}
   

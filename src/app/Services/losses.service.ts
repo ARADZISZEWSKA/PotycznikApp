@@ -12,7 +12,7 @@ export interface LossDto {
   providedIn: 'root'
 })
 export class LossesService {
-  private apiUrl = 'http://localhost:5099/api/Losses'; // Adres API backendu
+  private apiUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/Losses'; // Adres API backendu
 
   constructor(private http: HttpClient) {}
 

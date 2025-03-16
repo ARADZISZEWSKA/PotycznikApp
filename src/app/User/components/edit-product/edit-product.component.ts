@@ -9,6 +9,7 @@ import { Category } from '../../../models/Category.model';
 import { CategoryService } from 'src/app/Services/category.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { InventoryService } from 'src/app/Services/inventory.service';
+import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 
 @Component({
   selector: 'app-edit-product',
@@ -76,15 +77,18 @@ export class EditProductComponent implements OnInit {
       }
     });
   }
-
-  
+ 
   toggleSubOptions(option: string) {
     this.expandedOption = this.expandedOption === option ? null : option;
   }
 
   getFullImageUrl(relativePath: string | undefined | null): string {
-    return this.productService.getImageUrl(relativePath || null);
+    return relativePath ? this.productService.getImageUrl(relativePath) : 'assets/placeholder.png';
   }
+  
+  setDefaultImage(event: any) {
+    event.target.src = 'assets/placeholder.png';
+  }  
 
   openProductModalByCategoryId(categoryId: number) {
     if (categoryId === 0) {
@@ -376,10 +380,66 @@ export class EditProductComponent implements OnInit {
     console.log('Obecna lista produktów:', this.selectedProducts);
   }
   
-  
   showTemporaryProducts() {
     const products = this.productService.getTemporaryProducts();
     console.log('Tymczasowe produkty:', products);
   }
+
+  async scanBarcode() {
+    try {
+      const permission = await BarcodeScanner.checkPermissions();
+      if (permission.camera !== 'granted') {
+        await BarcodeScanner.requestPermissions();
+      }
+  
+      const { barcodes } = await BarcodeScanner.scan({
+        formats: [
+          BarcodeFormat.Ean13,
+          BarcodeFormat.Ean8,
+          BarcodeFormat.UpcA,
+          BarcodeFormat.UpcE
+        ]
+      });
+  
+      if (barcodes.length > 0) {
+        const barcodeValue = barcodes[0].rawValue;
+        console.log('Zeskanowany kod:', barcodeValue);
+        this.searchProductByBarcode(barcodeValue);
+      } else {
+        this.showAlert('Nie zeskanowano kodu kreskowego', 'Błąd');
+      }
+    } catch (error) {
+      console.error('Błąd podczas skanowania:', error);
+      this.showAlert('Wystąpił problem podczas skanowania kodu kreskowego', 'Błąd');
+    }
+  }  
+  
+  searchProductByBarcode(barcode: string) {
+    const product = this.productService.getTemporaryProducts().find(p => p.barcode === barcode);
+    if (product) {
+      this.showProductModal(product);
+    } else {
+      this.productService.getProductByBarcode(barcode).subscribe({
+        next: (product) => {
+          if (product) {
+            this.productService.addTemporaryProduct(product);
+            this.showProductModal(product);
+          } else {
+            this.showAlert('Nie znaleziono produktu o tym kodzie kreskowym.', 'Informacja');
+          }
+        },
+        error: (error) => {
+          console.error('Błąd podczas wyszukiwania produktu:', error);
+          this.showAlert('Nie udało się wyszukać produktu.', 'Błąd');
+        }
+      });
+    }
+  }
+
+  showProductModal(product: Product) {
+    this.selectedProducts = [product];
+    this.productModal?.present();
+  }
+  
 
 }

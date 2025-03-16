@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class InventoryService {
 
-  private baseUrl = 'http://localhost:5099/api/inventoryRecords';  // URL do kontrolera InventoryRecords
+  private baseUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/inventoryRecords';  // URL do kontrolera InventoryRecords
 
   constructor(private http: HttpClient) { }
 

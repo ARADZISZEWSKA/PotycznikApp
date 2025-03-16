@@ -9,7 +9,7 @@ import { RegisterUserDto } from '../Dto/register-user.dto';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5099/api/auth';
+  private apiUrl = 'https://potycznik-backend-cnetdwehezccafha.westeurope-01.azurewebsites.net/api/auth';
 
   constructor(private http: HttpClient) {}
 

@@ -39,6 +39,15 @@
         <ion-icon name="add"></ion-icon>
       </ion-button>
 
+      <!-- Przyciski wyszukiwania produktów po kodzie kreskowym-->
+      <ion-button 
+        class="scan-button"
+        shape="round" 
+        color="secondary" 
+        (click)="scanBarcode()">
+        <ion-icon name="barcode-outline"></ion-icon>
+      </ion-button>      
+
       <!-- Przyciski do anulowania i zakończenia inwentaryzacji -->
       <div class="button-container no-scroll">
         <ion-button class="rounded-button cancel-button" (click)="confirmCancelInventory()" color="danger">
@@ -69,7 +78,7 @@
           <div class="product-row" *ngFor="let product of selectedProducts">
             <!-- Kolumna 1: Zdjęcie produktu -->
             <div class="product-image">
-              <img [src]="getFullImageUrl(product.image)" alt="{{ product.name }}" />
+              <img [src]="getFullImageUrl(product.image)" (error)="setDefaultImage($event)" alt="Product Image" />
             </div>
   
             <!-- Kolumna 2: Nazwa produktu -->

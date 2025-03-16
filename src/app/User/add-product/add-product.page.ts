@@ -6,6 +6,7 @@ import { AlertController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { CategoryService } from '../../Services/category.service';
 import { Category } from '../../models/Category.model';
+import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 
 @Component({
   selector: 'app-add-product',
@@ -28,6 +29,7 @@ export class AddProductPage implements OnInit {
   selectedFile: File | null = null;
   showDatePicker: boolean = false;
   showAdditionalInfo = false;
+  scannedBarcodes: string[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -41,7 +43,7 @@ export class AddProductPage implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       const categoryId = params['categoryId'];
-      console.log('Otrzymany categoryId z URL:', categoryId); // Sprawdź, co trafia do tej zmiennej
+      console.log('Otrzymany categoryId z URL:', categoryId); 
     });
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
@@ -52,6 +54,66 @@ export class AddProductPage implements OnInit {
         console.error('Błąd przy ładowaniu kategorii:', err);
       },
     });
+  }
+
+  async scanBarcode() {
+    try {
+      const permission = await BarcodeScanner.checkPermissions();
+      if (permission.camera !== 'granted') {
+        await BarcodeScanner.requestPermissions();
+      }
+
+      const { barcodes } = await BarcodeScanner.scan({
+        formats: [
+          BarcodeFormat.Ean13,
+          BarcodeFormat.Ean8,
+          BarcodeFormat.UpcA,
+          BarcodeFormat.UpcE
+        ]
+      });
+
+      if (barcodes.length > 0) {
+        this.product.barcode = barcodes[0].rawValue;
+        console.log('Zeskanowany kod:', barcodes[0].rawValue);
+        
+        // Sprawdzenie, czy produkt o danym kodzie już istnieje
+        this.checkExistingProduct(this.product.barcode);
+      } else {
+        this.showAlert('Błąd', 'Nie zeskanowano kodu kreskowego');
+      }
+    } catch (error) {
+      console.error('Błąd podczas skanowania:', error);
+      this.showAlert('Błąd', 'Wystąpił problem podczas skanowania kodu kreskowego');
+    }
+  }
+
+  async checkExistingProduct(barcode: string) {
+    try {
+      const existingProduct = await this.productService.getProductByBarcode(barcode).toPromise();
+      if (existingProduct) {
+        const alert = await this.alertController.create({
+          header: 'Produkt istnieje',
+          message: 'Produkt o tym kodzie kreskowym już istnieje. Czy chcesz go edytować?',
+          buttons: [
+            {
+              text: 'Anuluj',
+              role: 'cancel'
+            },
+            {
+              text: 'Edytuj',
+              handler: () => {
+                this.router.navigate(['/edit-product'], {
+                  queryParams: { productId: existingProduct.id }
+                });
+              }
+            }
+          ]
+        });
+        await alert.present();
+      }
+    } catch (error) {
+      console.error('Błąd podczas sprawdzania istniejącego produktu:', error);
+    }
   }
 
   onFileSelected(event: any) {
@@ -66,15 +128,22 @@ export class AddProductPage implements OnInit {
     this.fileInput.nativeElement.click();
   }
 
-  
   toggleDatePicker(): void {
     this.showDatePicker = !this.showDatePicker;
   }
 
-  addProduct(): void {
+  async addProduct() {
     if (!this.product.categoryId) {
-      alert('Kategoria jest wymagana');
+      await this.showAlert('Błąd', 'Kategoria jest wymagana');
       return;
+    }
+
+    if (this.product.barcode) {
+      const isUnique = await this.validateBarcodeUniqueness(this.product.barcode);
+      if (!isUnique) {
+        await this.showAlert('Błąd', 'Kod kreskowy już istnieje w bazie danych');
+        return;
+      }
     }
   
     const formData = new FormData();
@@ -105,7 +174,7 @@ export class AddProductPage implements OnInit {
       },
       error: (err) => {
         console.error('Błąd przy tworzeniu produktu:', err);
-        alert('Błąd przy tworzeniu produktu: ' + err.message);
+        this.showAlert('Błąd', 'Błąd przy tworzeniu produktu: ' + err.message);
       },
     });
   }
@@ -119,5 +188,23 @@ export class AddProductPage implements OnInit {
       },
     });
   }
-  
-}  
+
+  async validateBarcodeUniqueness(barcode: string): Promise<boolean> {
+    try {
+      const existingProduct = await this.productService.getProductByBarcode(barcode).toPromise();
+      return !existingProduct;
+    } catch (error) {
+      console.error('Błąd podczas sprawdzania unikalności kodu kreskowego:', error);
+      return false;
+    }
+  }
+
+  async showAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+}
