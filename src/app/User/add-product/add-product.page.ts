@@ -58,11 +58,13 @@ export class AddProductPage implements OnInit {
 
   async scanBarcode() {
     try {
+      // Sprawdzenie i uzyskanie uprawnień do kamery
       const permission = await BarcodeScanner.checkPermissions();
       if (permission.camera !== 'granted') {
         await BarcodeScanner.requestPermissions();
       }
-
+  
+      // Skanowanie kodu kreskowego
       const { barcodes } = await BarcodeScanner.scan({
         formats: [
           BarcodeFormat.Ean13,
@@ -71,50 +73,20 @@ export class AddProductPage implements OnInit {
           BarcodeFormat.UpcE
         ]
       });
-
+  
+      // Jeśli zeskanowano kod
       if (barcodes.length > 0) {
         this.product.barcode = barcodes[0].rawValue;
-        console.log('Zeskanowany kod:', barcodes[0].rawValue);
-        
-        // Sprawdzenie, czy produkt o danym kodzie już istnieje
-        this.checkExistingProduct(this.product.barcode);
+        console.log('Zeskanowany kod:', this.product.barcode);
       } else {
-        this.showAlert('Błąd', 'Nie zeskanowano kodu kreskowego');
+        await this.showAlert('Błąd', 'Nie zeskanowano kodu kreskowego');
       }
     } catch (error) {
       console.error('Błąd podczas skanowania:', error);
-      this.showAlert('Błąd', 'Wystąpił problem podczas skanowania kodu kreskowego');
+      await this.showAlert('Błąd', 'Wystąpił problem podczas skanowania kodu kreskowego');
     }
   }
-
-  async checkExistingProduct(barcode: string) {
-    try {
-      const existingProduct = await this.productService.getProductByBarcode(barcode).toPromise();
-      if (existingProduct) {
-        const alert = await this.alertController.create({
-          header: 'Produkt istnieje',
-          message: 'Produkt o tym kodzie kreskowym już istnieje. Czy chcesz go edytować?',
-          buttons: [
-            {
-              text: 'Anuluj',
-              role: 'cancel'
-            },
-            {
-              text: 'Edytuj',
-              handler: () => {
-                this.router.navigate(['/edit-product'], {
-                  queryParams: { productId: existingProduct.id }
-                });
-              }
-            }
-          ]
-        });
-        await alert.present();
-      }
-    } catch (error) {
-      console.error('Błąd podczas sprawdzania istniejącego produktu:', error);
-    }
-  }
+  
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -137,14 +109,7 @@ export class AddProductPage implements OnInit {
       await this.showAlert('Błąd', 'Kategoria jest wymagana');
       return;
     }
-
-    if (this.product.barcode) {
-      const isUnique = await this.validateBarcodeUniqueness(this.product.barcode);
-      if (!isUnique) {
-        await this.showAlert('Błąd', 'Kod kreskowy już istnieje w bazie danych');
-        return;
-      }
-    }
+    
   
     const formData = new FormData();
     formData.append('name', this.product.name);
@@ -192,12 +157,22 @@ export class AddProductPage implements OnInit {
   async validateBarcodeUniqueness(barcode: string): Promise<boolean> {
     try {
       const existingProduct = await this.productService.getProductByBarcode(barcode).toPromise();
-      return !existingProduct;
+      console.log('Odpowiedź z API:', existingProduct);
+  
+      // Sprawdzamy, czy odpowiedź zawiera dane produktu
+      if (existingProduct && existingProduct.id) {  // Zakładając, że odpowiedź zawiera id produktu
+        console.log('Kod kreskowy istnieje w bazie');
+        return false;  // Produkt istnieje, zwróć false
+      } else {
+        console.log('Kod kreskowy jest unikalny');
+        return true;  // Produkt nie istnieje, zwróć true
+      }
     } catch (error) {
-      console.error('Błąd podczas sprawdzania unikalności kodu kreskowego:', error);
+      console.error('Błąd przy sprawdzaniu unikalności:', error);
       return false;
     }
   }
+   
 
   async showAlert(header: string, message: string) {
     const alert = await this.alertController.create({

@@ -38,9 +38,14 @@ export class EditProductComponent implements OnInit {
     private alertController: AlertController,
     private categoryService: CategoryService,
     private sanitizer: DomSanitizer,
-    private inventoryService: InventoryService
-
-  ) {}
+    private inventoryService: InventoryService,
+    
+  ) {
+    BarcodeScanner.addListener(
+      'googleBarcodeScannerModuleInstallProgress',
+      (event) => {
+        console.log('Postęp instalacji:', event.state, event.progress);});
+  }
 
   
   ngOnInit() {
@@ -387,10 +392,16 @@ export class EditProductComponent implements OnInit {
 
   async scanBarcode() {
     try {
+      // Sprawdź dostępność modułu
+      const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+      if (!available) {
+        // Zainstaluj moduł z obsługą statusu
+        await BarcodeScanner.installGoogleBarcodeScannerModule();
+      
       const permission = await BarcodeScanner.checkPermissions();
       if (permission.camera !== 'granted') {
         await BarcodeScanner.requestPermissions();
-      }
+      }}
   
       const { barcodes } = await BarcodeScanner.scan({
         formats: [

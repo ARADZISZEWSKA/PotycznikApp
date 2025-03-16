@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { Product } from '../models/product.model';
 import { InventoryRecordRequest } from '../models/inventoryRecordRequest.model';  // Nowy model
 
@@ -158,8 +158,15 @@ addDeletedProduct(productId: number): void {
   localStorage.setItem('deletedProductIds', JSON.stringify(this.deletedProductIds));
 }
 
-getProductByBarcode(barcode: string): Observable<Product> {
-  return this.http.get<Product>(`${this.baseUrl}/barcode/${barcode}`)
+getProductByBarcode(barcode: string): Observable<Product | null> {
+  return this.http.get<Product>(`${this.baseUrl}/barcode/${barcode}`).pipe(
+    catchError(error => {
+      if (error.status === 404) {
+        return of(null); // Zwróć null, jeśli produkt nie istnieje
+      }
+      throw error; // Rzuć błąd dla innych przypadków
+    })
+  );
 }
 
 
