@@ -1,11 +1,10 @@
 html, body {
   height: 100%;
-  overflow: hidden; 
+  overflow: auto; 
 }
 
 ion-content {
   --background: #f5f5ff;
-  --overflow: hidden !important;
 }
 
 .main {
@@ -15,14 +14,15 @@ ion-content {
 .inventory-card-main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: calc(100vh - 100px);
-  overflow-y: auto  !important;;
+  justify-content: flex-start;;
+  height: 65%;
+  overflow-y: auto !important;
   max-height: calc(100vh - 140px);
   border-radius: 15px;
   background-color: #f8f8f8;
   max-width: 95%;
   position: relative;
+  padding-bottom: 20px;
 }
 
 .inventory-card-content {
@@ -35,6 +35,24 @@ ion-content {
 
 .custom-grid {
   max-width: 100%; 
+}
+
+.header-row,
+.record-row {
+  align-items: center;
+}
+
+.header-row ion-col,
+.record-row ion-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-row ion-col:first-child,
+.record-row ion-col:first-child {
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .header-row {
@@ -50,12 +68,14 @@ ion-content {
   align-content: center;
   font-size: 12px;
   padding: 0px;
-
 }
 
 .record-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  text-align: center;
   background-color: #8aadff42;
-  padding: 8px 0; 
+  padding: 8px 0;
   border-radius: 10px;
   margin-bottom: 10px;
   align-items: center;
@@ -97,21 +117,96 @@ ion-card-title {
 }
 
 ion-back-button {
-  color: #555; /* Ciemno-szary kolor tekstu */
-  font-size: 14px; /* Zmniejszenie rozmiaru tekstu */
+  color: #555;
+  font-size: 14px;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+.header-card {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.back-button {
+  background: transparent;
+  color: black;
+  position: absolute;
+  left: 10px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.date-picker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-picker-label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+
+.date-picker {
+  flex-grow: 1;
+  max-width: 200px;
 }
 
 @media (max-width: 740px) {
   .product-name {
-    font-size: 15px; /* Zmniejszony rozmiar czcionki */
+    font-size: 15px;
   }
 
   .header-label {
-    font-size: 14px; /* Zmniejszony rozmiar czcionki */
+    font-size: 13px;
+  }
+
+  .date-picker-row {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .date-picker {
+    max-width: 60%;
+  }
+
+  .date-picker-label {
+    font-size: 13px;
   }
 }
 
-/* Opcjonalnie: Dla bardzo małych ekranów (np. 480px) */
 @media (max-width: 480px) {
   .product-name {
     font-size: 13px;
@@ -120,4 +215,49 @@ ion-back-button {
   .header-label {
     font-size: 12px;
   }
+
+  .date-picker-label {
+    font-size: 12px;
+  }
+
+  .date-picker {
+    max-width: 100%;
+  }
+
+  .date-picker-row {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+.inventory-header-row {
+  display: grid;
+  grid-template-columns: 5fr 2fr 1fr 2fr;
+  font-weight: bold;
+  font-size: 14px;
+  color: #4a306d;
+  margin-bottom: 10px;
+  padding: 0 9px;
+  text-align: center;
+}
+
+.inventory-record-row {
+  display: grid;
+  grid-template-columns: 5fr 2fr 1fr 2fr;
+  background-color: #8aadff42;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  font-size: 14px;
+  text-align: center;
+}
+
+.inventory-header-label:first-child,
+.product-name {
+  text-align: left;
+  font-weight: bold;
+}
+
+.inventory-header-label {
+  text-align: center;
 }

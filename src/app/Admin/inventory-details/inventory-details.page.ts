@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InventoryService } from '../../Services/inventory.service';
 import { CategoryService } from '../../Services/category.service';
+import { NavController } from '@ionic/angular';
 
 interface InventoryRecord {
   categoryId: number | null;
@@ -15,19 +16,20 @@ interface InventoryRecord {
   styleUrls: ['./inventory-details.page.scss'],
 })
 export class InventoryDetailsPage implements OnInit {
-  availableDates: string[] = []; // Lista dostępnych dat
-  selectedDate: string = ''; // Wybrana data przez użytkownika
-  inventoryDetails: InventoryRecord[] = []; // Szczegóły inwentaryzacji
-  groupedInventoryDetails: any = []; // Dane pogrupowane według kategorii
-  categories: any[] = []; // Kategorie pobrane z CategoryService
+  availableDates: string[] = []; 
+  selectedDate: string = '';
+  inventoryDetails: InventoryRecord[] = []; 
+  groupedInventoryDetails: any = []; 
+  categories: any[] = []; 
+  isModalOpen: boolean = false;
 
   constructor(
     private inventoryService: InventoryService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {
-    // Pobranie listy dat
     this.inventoryService.getAvailableDates().subscribe(
       (response: any) => {
         if (Array.isArray(response)) {
@@ -52,6 +54,17 @@ export class InventoryDetailsPage implements OnInit {
         console.error('Błąd podczas pobierania kategorii:', error);
       }
     );
+  }
+
+  openModal() {
+    if (this.selectedDate) {
+      this.fetchInventory(); // Pobranie danych
+      this.isModalOpen = true;
+    }
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
   }
 
   fetchInventory() {
@@ -162,5 +175,9 @@ export class InventoryDetailsPage implements OnInit {
       // Tutaj dodaj logiczne doładowanie danych
       event.target.complete();
     }, 500); // Może być inny czas opóźnienia
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 }

@@ -12,13 +12,12 @@ ion-header {
 }
 .logout-icon {
   position: absolute;
-  top: 16px; /* Odstęp od góry */
-  right: 16px; /* Odstęp od prawej */
-  z-index: 10; /* Zapewnia, że ikona jest na wierzchu */
+  right: 10px; 
+  z-index: 10;
 }
 
 ion-button {
   --padding-start: 0;
   --padding-end: 0;
-  --icon-size: 24px; /* Zmienia wielkość ikony */
+  --icon-size: 28px;
 }
