@@ -1,17 +1,12 @@
-<ion-header>
-  <ion-toolbar class="custom-toolbar">
-    <ion-title>Przegląd strat</ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button class="custom-back-button" text="Powrót" defaultHref="/home-admin"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="main">
   <ion-card class="losses-card">
     <ion-card-header>
-      <ion-card-title>Lista strat</ion-card-title>
+      <div class="header-with-back">
+        <ion-back-button class="custom-back-button"  defaultHref="/home-admin"></ion-back-button>
+        <ion-card-title>Lista strat</ion-card-title>
+      </div>
     </ion-card-header>
+    
     <ion-card-content>
       <ion-grid class="custom-grid">
        

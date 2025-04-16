@@ -21,6 +21,7 @@ export class AddProductPage implements OnInit {
     name: '',
     categoryId: 0, 
     quantity: 0,
+    minimalQuantity: 0,
     unit: '',
     image: '',
     barcode: undefined,
@@ -87,7 +88,6 @@ export class AddProductPage implements OnInit {
     }
   }
   
-
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -109,12 +109,17 @@ export class AddProductPage implements OnInit {
       await this.showAlert('Błąd', 'Kategoria jest wymagana');
       return;
     }
-    
+
+    if (this.product.minimalQuantity < 0) {
+      await this.showAlert('Błąd', 'Minimalna ilość nie może być ujemna');
+      return;
+    }
   
     const formData = new FormData();
     formData.append('name', this.product.name);
     formData.append('unit', this.product.unit);
     formData.append('categoryId', this.product.categoryId.toString());
+    formData.append('minQuantity', this.product.minimalQuantity.toString());
   
     if (this.product.barcode) {
       formData.append('barcode', this.product.barcode);
@@ -165,7 +170,7 @@ export class AddProductPage implements OnInit {
         return false;  // Produkt istnieje, zwróć false
       } else {
         console.log('Kod kreskowy jest unikalny');
-        return true;  // Produkt nie istnieje, zwróć true
+        return true; 
       }
     } catch (error) {
       console.error('Błąd przy sprawdzaniu unikalności:', error);

@@ -3,6 +3,7 @@ export interface Product {
   name: string;
   categoryId: number;
   quantity: number;
+  minimalQuantity: number;
   unit: string;
   barcode?: string;
   expiryDate?: Date | null;

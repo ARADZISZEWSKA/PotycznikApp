@@ -103,10 +103,17 @@ ion-title {
     --border-color: transparent;
     box-shadow: none !important; 
   }
+
+  .header-with-back {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+  }
   
   .custom-back-button {
-    color: white !important; 
-    font-size: 13px;
+    margin-left: 0;
+    color: #333;
+    margin-top: 4px;
   }
   
   

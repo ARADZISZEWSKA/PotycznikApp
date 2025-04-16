@@ -99,8 +99,8 @@ export class EditProductComponent implements OnInit {
     if (categoryId === 0) {
       // Jeśli kategoria to 0, nie próbuj ładować produktów, po prostu wróć do głównego widoku
       console.log('Brak wybranej kategorii (categoryId = 0), wracamy do głównego widoku.');
-      this.productModal?.dismiss();  // Zamknij modal
-      this.router.navigate(['/edit-product']);  // Przekierowanie do głównej strony
+      this.productModal?.dismiss();  
+      this.router.navigate(['/edit-product']);  
       return;
     }
   
@@ -209,6 +209,9 @@ export class EditProductComponent implements OnInit {
   
   openProductDetailsModal(product: Product) {
     this.selectedProduct = product; 
+    if (this.selectedProduct) {
+      console.log(this.selectedProduct.minimalQuantity); 
+    }
     if (this.productDetailsModal) {
       this.productDetailsModal.present();
     }
@@ -353,10 +356,8 @@ export class EditProductComponent implements OnInit {
       // Aktualizujemy tymczasowe produkty
       this.productService.addDeletedProduct(this.selectedProduct.id!);
   
-      // Usuwamy produkt z listy wyświetlanych produktów
       this.selectedProducts = this.selectedProducts.filter(p => p.id !== this.selectedProduct!.id);
   
-      // Zamykamy modal
       this.closeProductDetailsModal();
       this.showAlert('Produkt został oznaczony do usunięcia.', 'Sukces');
     } else {

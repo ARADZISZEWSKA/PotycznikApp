@@ -33,6 +33,12 @@
             </ion-select>
           </ion-item>
 
+          <!-- Pole Minimalna Ilość -->
+          <ion-item>
+            <ion-label position="floating">Minimalna Ilość</ion-label>
+            <ion-input [(ngModel)]="product.minimalQuantity" name="minimalQuantity" type="number" min="0" required></ion-input>
+          </ion-item>
+
           <ion-item lines="none" class="info-toggle">
             <ion-button 
               expand="block" 

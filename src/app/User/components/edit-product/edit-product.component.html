@@ -143,15 +143,15 @@
             <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
           </ion-button>
           <img
-          *ngIf="selectedProduct && !selectedProduct.isDeleted" 
-          [src]="getFullImageUrl(selectedProduct?.image)" 
-          alt="Zdjęcie produktu" 
-          onerror="this.src='assets/placeholder.png'" />
+            *ngIf="selectedProduct && !selectedProduct.isDeleted" 
+            [src]="getFullImageUrl(selectedProduct?.image)" 
+            alt="Zdjęcie produktu" 
+            onerror="this.src='assets/placeholder.png'" />
         
-        <!-- Domyślny obraz, jeśli produkt jest usunięty -->
-        <img *ngIf="selectedProduct && selectedProduct.isDeleted" 
-          src="assets/placeholder.png" 
-          alt="Produkt usunięty" />
+          <!-- Domyślny obraz, jeśli produkt jest usunięty -->
+          <img *ngIf="selectedProduct && selectedProduct.isDeleted" 
+            src="assets/placeholder.png" 
+            alt="Produkt usunięty" />
         </div>
   
         <div class="details-container">
@@ -164,6 +164,14 @@
               {{ selectedProduct?.unit || '' }}
             </span>
           </div>
+  
+          <div class="row">
+            <span class="label">Minimalna ilość:</span>
+            <span class="value">
+              {{ selectedProduct && selectedProduct.minimalQuantity != null ? selectedProduct.minimalQuantity : 'Brak danych' }}
+              {{ selectedProduct?.unit || '' }}
+            </span>
+          </div>          
   
           <div class="row">
             <span class="label">Ostatnia inwentaryzacja:</span>
