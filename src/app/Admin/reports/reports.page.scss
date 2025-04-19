@@ -1,0 +1,36 @@
+ion-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    box-shadow: none;
+  }
+  
+  ion-content {
+    --padding-top: 56px;
+  }
+  
+  .content-background {
+    --background: url('/assets/patternpad-2024-11-28-02-31-14.svg') no-repeat center center / cover;
+  }
+  
+  .custom-card {
+    margin: 16px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    background: white;
+    padding: 16px;
+  }
+  
+  ion-toolbar {
+    --background: transparent;
+    --box-shadow: none;
+  }
+  
+  ion-icon {
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+  }
+  

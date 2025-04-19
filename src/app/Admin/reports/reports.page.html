@@ -1,0 +1,31 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" fill="clear">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="content-background">
+
+  <!-- Stylizowana karta raportów -->
+  <ion-card class="custom-card">
+    <ion-card-header>
+      <ion-card-subtitle>Wybierz raport do pobrania</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+        <ion-item button detail (click)="downloadReport()" [disabled]="isLoading">
+          <ion-label>
+            {{ isLoading ? 'Generowanie raportu...' : 'Raport inwentaryzacyjny' }}
+          </ion-label>
+          <ion-spinner *ngIf="isLoading" name="dots" slot="end"></ion-spinner>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

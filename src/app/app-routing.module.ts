@@ -55,6 +55,14 @@ const routes: Routes = [
     path: 'add-user',
     loadChildren: () => import('./Admin/add-user/add-user.module').then( m => m.AddUserPageModule)
   },
+  {
+    path: 'settings-admin',
+    loadChildren: () => import('./Admin/settings-admin/settings-admin.module').then( m => m.SettingsAdminPageModule)
+  },
+  {
+    path: 'reports',
+    loadChildren: () => import('./Admin/reports/reports.module').then( m => m.ReportsPageModule)
+  },
 
 
 
