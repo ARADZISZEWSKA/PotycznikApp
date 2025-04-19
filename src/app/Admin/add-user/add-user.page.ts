@@ -124,6 +124,6 @@ export class AddUserPage {
   }
 
   goBack() {
-    this.router.navigate(['/home-admin']);
+    this.router.navigate(['/settings-admin']);
   }
 }

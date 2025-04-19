@@ -1,9 +1,21 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Ustawienia</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="content-background">
 
-<ion-content>
-  <ion-button (click)="goToReports()">Raporty</ion-button>
+  <!-- Karta z całą zawartością -->
+  <div class="custom-card">
+    
+    <!-- Strzałka wewnątrz karty -->
+    <ion-button fill="clear" class="back-button" [routerLink]="['/previous-page']">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+
+    <div class="button-group">
+      <ion-button expand="block" (click)="goToReports()">Raporty</ion-button>
+      <ion-button expand="block" (click)="addUser()">Dodaj użytkownika</ion-button>
+      <ion-button expand="block" (click)="changePassword()">Zmień hasło</ion-button>
+    </div>
+
+    <ion-button expand="block" class="logout-button" (click)="logout()">
+      Wyloguj
+    </ion-button>
+  </div>
 </ion-content>

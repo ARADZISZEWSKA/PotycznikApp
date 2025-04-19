@@ -23,8 +23,8 @@ export class HomeAdminPage implements OnInit {
       this.router.navigate(['/inventory-details']); 
     }if (option === 'Straty') {
       this.router.navigate(['/review-loss']); 
-    }else if (option === 'Dodaj użytkownika') {
-      this.router.navigate(['/add-user']); 
+    }else if (option === 'Ustawienia') {
+      this.router.navigate(['/settings-admin']); 
     }
   }
 
